@@ -10,7 +10,7 @@
         :aria-expanded="open"
     >
         <span class="font-display font-semibold">{{ $title }}</span>
-        <x-frietzakje-icon name="expand_more" class="text-xl transition-transform duration-200" :class="open && 'rotate-180'" x-bind:class="open ? 'rotate-180' : ''" />
+        <x-frietzakje-icon name="expand_more" class="text-xl transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''" />
     </button>
 
     <div x-show="open" x-collapse>
