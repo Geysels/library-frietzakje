@@ -1,0 +1,20 @@
+<?php
+
+namespace Frietzakje\Ui\Components;
+
+use Illuminate\View\Component;
+
+class Checkbox extends Component
+{
+    public function __construct(
+        public ?string $label = null,
+        public ?string $help = null,
+        public ?string $name = null,
+    ) {
+    }
+
+    public function render()
+    {
+        return view('frietzakje::components.checkbox');
+    }
+}
