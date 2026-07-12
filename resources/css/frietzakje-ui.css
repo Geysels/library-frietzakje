@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/forms';
 
 @theme {
     /* Fonts (load via <link> in your app layout). */
@@ -22,7 +23,7 @@
     --color-accent: #3901c5;
     --color-accent-2: #3f9ffc;
     --color-success: #2ac427;
-    --color-danger: #cb0202;
+    --color-danger: #ff4444;
     --color-message: #02a4c8;
 }
 
