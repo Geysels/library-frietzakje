@@ -23,7 +23,7 @@
     --color-accent: #3901c5;
     --color-accent-2: #3f9ffc;
     --color-success: #2ac427;
-    --color-danger: #ff4444;
+    --color-danger: #ff6b6b;
     --color-message: #02a4c8;
 }
 
@@ -68,6 +68,26 @@ a, button {
     text-transform: uppercase;
     font-size: var(--text-small);
     color: var(--color-primary);
+}
+
+/* Custom checkbox and radio styling with our colors */
+input[type='checkbox'],
+input[type='radio'] {
+    color: var(--color-primary);
+    border-color: var(--color-secondary);
+    background-color: var(--color-bg);
+}
+
+input[type='checkbox']:checked,
+input[type='radio']:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+input[type='checkbox']:focus,
+input[type='radio']:focus {
+    ring-color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 /* Discretion mode — a single body-level toggle blurs every sensitive figure

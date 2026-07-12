@@ -28,8 +28,11 @@ class UiServiceProvider extends ServiceProvider
 
         // Register Blade component namespace
         $this->loadViewComponentsAs('frietzakje', [
+            Components\Accordion::class,
             Components\Alert::class,
+            Components\Avatar::class,
             Components\Badge::class,
+            Components\Breadcrumbs::class,
             Components\Button::class,
             Components\Card::class,
             Components\Checkbox::class,
@@ -38,10 +41,14 @@ class UiServiceProvider extends ServiceProvider
             Components\EmptyState::class,
             Components\Icon::class,
             Components\Input::class,
+            Components\Link::class,
             Components\Modal::class,
+            Components\Progress::class,
             Components\Radio::class,
             Components\Select::class,
             Components\Spinner::class,
+            Components\Table::class,
+            Components\Tabs::class,
             Components\Textarea::class,
             Components\Toggle::class,
         ]);
