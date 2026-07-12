@@ -36,6 +36,7 @@ class UiServiceProvider extends ServiceProvider
             Components\Button::class,
             Components\Card::class,
             Components\Checkbox::class,
+            Components\DateTimePicker::class,
             Components\Discreet::class,
             Components\Divider::class,
             Components\EmptyState::class,
