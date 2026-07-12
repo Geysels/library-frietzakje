@@ -1,0 +1,45 @@
+{
+    "name": "frietzakje/ui",
+    "description": "Shared UI component library for the Frietzakje ecosystem",
+    "type": "library",
+    "keywords": ["laravel", "blade", "components", "ui", "frietzakje"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Frietzakje Team"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frietzakje\\Ui\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frietzakje\\Ui\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Frietzakje\\Ui\\UiServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
