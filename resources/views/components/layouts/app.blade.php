@@ -39,29 +39,7 @@
       x-data="{ sidebarOpen: false }"
       :class="{ 'privacy': $store.discreet?.on }">
 
-    @guest
-        {{-- Guest Layout (Login/Public Pages) --}}
-        <header class="border-b border-secondary/80 bg-bg/85 backdrop-blur-md">
-            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <a href="/" class="flex items-center gap-2.5 transition-opacity duration-150 hover:opacity-80">
-                    @if(file_exists(public_path('logo.svg')))
-                        <img src="{{ asset('logo.svg') }}" alt="{{ config('app.name') }}" class="h-9 w-9 rounded-md" loading="lazy">
-                    @endif
-                    <span class="text-h4 font-display font-extrabold">{{ config('app.name') }}</span>
-                </a>
-                @if(Route::has('login'))
-                    <x-frietzakje-button href="{{ route('login') }}" size="sm">Inloggen</x-frietzakje-button>
-                @endif
-            </div>
-        </header>
-
-        <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-            {{ $slot }}
-        </main>
-    @endguest
-
-    @auth
-        {{-- Authenticated Layout (Sidebar + Main) --}}
+    {{-- Sidebar Layout --}}
         <div class="flex flex-1 overflow-hidden">
             {{-- Sidebar --}}
             <aside class="fixed inset-y-0 left-0 z-40 flex w-64 flex-shrink-0 flex-col border-r border-secondary bg-bg transition-transform duration-200 lg:static lg:h-screen overflow-y-auto"
@@ -75,7 +53,7 @@
                     <span class="text-h4 font-display font-extrabold">{{ config('app.name') }}</span>
 
                     {{-- Optional: Discretion Mode Toggle --}}
-                    @if(isset($showDiscreetToggle) && $showDiscreetToggle && auth()->user()->can('view-sensitive-data'))
+                    @if(isset($showDiscreetToggle) && $showDiscreetToggle)
                         <button type="button"
                                 @click="$store.discreet.on = !$store.discreet.on"
                                 class="ml-auto grid size-9 place-items-center rounded-md text-text/70 transition-colors hover:bg-secondary/40 hover:text-primary"
@@ -91,52 +69,12 @@
                     {{ $navigation ?? '' }}
                 </nav>
 
-                {{-- Sidebar Footer (User Menu) --}}
-                <div class="border-t border-secondary p-4 flex-shrink-0" x-data="{ userMenuOpen: false }">
-                    <div class="relative">
-                        <button type="button"
-                                @click="userMenuOpen = !userMenuOpen"
-                                class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-150 hover:bg-secondary/40">
-                            <div class="flex items-center gap-3 overflow-hidden">
-                                <x-frietzakje-icon name="person" class="text-xl" />
-                                <span class="truncate font-medium">{{ auth()->user()->name }}</span>
-                            </div>
-                            <x-frietzakje-icon name="expand_more" class="text-lg transition-transform duration-200" ::class="userMenuOpen ? 'rotate-180' : ''" />
-                        </button>
-
-                        <div x-show="userMenuOpen"
-                             x-cloak
-                             @click.outside="userMenuOpen = false"
-                             x-transition:enter="transition ease-out duration-100"
-                             x-transition:enter-start="opacity-0 -translate-y-1"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-75"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 -translate-y-1"
-                             class="absolute bottom-full left-0 right-0 mb-2 rounded-lg border border-secondary bg-bg shadow-lg">
-                            {{ $userMenu ?? '' }}
-
-                            {{-- Default Logout --}}
-                            @if(!isset($userMenu))
-                                @if(Route::has('profile'))
-                                    <a href="{{ route('profile') }}"
-                                       class="flex items-center gap-3 rounded-t-lg px-3 py-2 text-sm transition-colors duration-150 hover:bg-secondary/40">
-                                        <x-frietzakje-icon name="settings" class="text-lg" />
-                                        <span>Profiel</span>
-                                    </a>
-                                @endif
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"
-                                            class="flex w-full items-center gap-3 rounded-b-lg px-3 py-2 text-sm transition-colors duration-150 hover:bg-secondary/40">
-                                        <x-frietzakje-icon name="logout" class="text-lg" />
-                                        <span>Uitloggen</span>
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
+                {{-- Sidebar Footer (Optional User Menu) --}}
+                @if(isset($userMenu))
+                    <div class="border-t border-secondary p-4 flex-shrink-0">
+                        {{ $userMenu }}
                     </div>
-                </div>
+                @endif
             </aside>
 
             {{-- Mobile Overlay --}}
@@ -163,7 +101,7 @@
                     <span class="text-lg font-bold">{{ config('app.name') }}</span>
 
                     {{-- Mobile Discretion Toggle --}}
-                    @if(isset($showDiscreetToggle) && $showDiscreetToggle && auth()->user()->can('view-sensitive-data'))
+                    @if(isset($showDiscreetToggle) && $showDiscreetToggle)
                         <button type="button"
                                 @click="$store.discreet.on = !$store.discreet.on"
                                 class="ml-auto grid size-9 place-items-center rounded-md text-text/70 transition-colors hover:bg-secondary/40 hover:text-primary">
@@ -181,7 +119,6 @@
                 </main>
             </div>
         </div>
-    @endauth
 
     {{-- Footer --}}
     @if(isset($showFooter) && $showFooter)
