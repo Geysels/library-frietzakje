@@ -16,30 +16,36 @@
     // Enable/disable time picker
     $enableTime = $mode === 'datetime' || $mode === 'time';
     $noCalendar = $mode === 'time';
+
+    // Build flatpickr options
+    $flatpickrOptions = [
+        'enableTime' => $enableTime,
+        'noCalendar' => $noCalendar,
+        'dateFormat' => $dateFormat,
+        'time_24hr' => $timeFormat === '24hr',
+    ];
+
+    if ($minDate ?? false) {
+        $flatpickrOptions['minDate'] = $minDate;
+    }
+    if ($maxDate ?? false) {
+        $flatpickrOptions['maxDate'] = $maxDate;
+    }
+    if ($defaultDate ?? false) {
+        $flatpickrOptions['defaultDate'] = $defaultDate;
+    }
+    if ($inline ?? false) {
+        $flatpickrOptions['inline'] = true;
+    }
+
+    $flatpickrOptionsJson = json_encode($flatpickrOptions);
 @endphp
 
 <div class="grid gap-1"
      x-data="{
         picker: null,
         init() {
-            this.picker = flatpickr(this.$refs.input, {
-                enableTime: {{ $enableTime ? 'true' : 'false' }},
-                noCalendar: {{ $noCalendar ? 'true' : 'false' }},
-                dateFormat: '{{ $dateFormat }}',
-                time_24hr: {{ $timeFormat === '24hr' ? 'true' : 'false' }},
-                @if($minDate ?? false)
-                minDate: '{{ $minDate }}',
-                @endif
-                @if($maxDate ?? false)
-                maxDate: '{{ $maxDate }}',
-                @endif
-                @if($defaultDate ?? false)
-                defaultDate: '{{ $defaultDate }}',
-                @endif
-                @if($inline ?? false)
-                inline: true,
-                @endif
-            });
+            this.picker = flatpickr(this.$refs.input, {!! $flatpickrOptionsJson !!});
         }
      }"
      x-init="init()">
