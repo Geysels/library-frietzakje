@@ -38,8 +38,59 @@
 <body class="min-h-screen bg-bg text-text antialiased"
       x-data="{
           sidebarOpen: false,
-          notificationCount: {{ $notificationCount ?? 0 }},
-          messageCount: {{ $messageCount ?? 0 }}
+          notificationCount: {{ $notificationCount ?? 3 }},
+          messageCount: {{ $messageCount ?? 0 }},
+          notificationPanelOpen: false,
+          notifications: [
+              {
+                  id: 1,
+                  type: 'success',
+                  icon: 'check_circle',
+                  title: 'Deployment successful',
+                  message: 'Your application has been deployed to production.',
+                  time: '5 minutes ago',
+                  read: false
+              },
+              {
+                  id: 2,
+                  type: 'warning',
+                  icon: 'warning',
+                  title: 'High memory usage',
+                  message: 'Server memory usage is at 85%. Consider scaling up.',
+                  time: '1 hour ago',
+                  read: false
+              },
+              {
+                  id: 3,
+                  type: 'info',
+                  icon: 'info',
+                  title: 'New update available',
+                  message: 'Version 2.5.0 is now available with new features.',
+                  time: '2 hours ago',
+                  read: false
+              }
+          ],
+          get unreadCount() {
+              return this.notifications.filter(n => !n.read).length;
+          },
+          markAsRead(id) {
+              const notif = this.notifications.find(n => n.id === id);
+              if (notif) notif.read = true;
+              this.notificationCount = this.unreadCount;
+          },
+          markAllAsRead() {
+              this.notifications.forEach(n => n.read = true);
+              this.notificationCount = 0;
+          },
+          removeNotification(id) {
+              this.notifications = this.notifications.filter(n => n.id !== id);
+              this.notificationCount = this.unreadCount;
+          },
+          clearAll() {
+              this.notifications = [];
+              this.notificationCount = 0;
+              this.notificationPanelOpen = false;
+          }
       }"
       :class="{ 'privacy': $store.discreet?.on }">
 
@@ -73,21 +124,121 @@
                 </button>
                 @endif
 
-                {{-- Notifications with Badge --}}
+                {{-- Notifications with Badge & Dropdown --}}
                 @if(!isset($hideNotifications) || !$hideNotifications)
                 <div class="relative">
                     <button
                         class="grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors"
-                        @click="$dispatch('toast', {message: notificationCount > 0 ? 'You have ' + notificationCount + ' new notifications' : 'No new notifications', variant: 'message'})"
+                        @click="notificationPanelOpen = !notificationPanelOpen"
+                        :class="{ 'bg-secondary/40': notificationPanelOpen }"
                     >
                         <x-frietzakje-icon name="notifications" class="text-xl" />
                     </button>
                     <span
-                        x-show="notificationCount > 0"
-                        x-text="notificationCount"
+                        x-show="unreadCount > 0"
+                        x-text="unreadCount"
                         x-cloak
                         class="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-bg"
                     ></span>
+
+                    {{-- Notification Dropdown Panel --}}
+                    <div
+                        x-show="notificationPanelOpen"
+                        @click.outside="notificationPanelOpen = false"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute right-0 top-12 w-96 rounded-lg border border-secondary bg-bg shadow-2xl"
+                        x-cloak
+                    >
+                        {{-- Header --}}
+                        <div class="flex items-center justify-between border-b border-secondary p-4">
+                            <div>
+                                <h3 class="font-bold">Notifications</h3>
+                                <p class="text-xs text-text/60" x-text="unreadCount > 0 ? unreadCount + ' unread' : 'All caught up!'"></p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button
+                                    @click="markAllAsRead()"
+                                    class="text-xs text-primary hover:underline"
+                                    x-show="unreadCount > 0"
+                                >
+                                    Mark all read
+                                </button>
+                                <button
+                                    @click="clearAll()"
+                                    class="text-xs text-danger hover:underline"
+                                    x-show="notifications.length > 0"
+                                >
+                                    Clear all
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Notifications List --}}
+                        <div class="max-h-96 overflow-y-auto">
+                            <template x-if="notifications.length === 0">
+                                <div class="p-8 text-center">
+                                    <x-frietzakje-icon name="notifications_none" class="text-4xl text-text/40 mx-auto mb-2" />
+                                    <p class="text-sm text-text/60">No notifications</p>
+                                </div>
+                            </template>
+
+                            <template x-for="notification in notifications" :key="notification.id">
+                                <div
+                                    class="border-b border-secondary/40 p-4 hover:bg-secondary/20 transition-colors cursor-pointer relative group"
+                                    :class="{ 'bg-secondary/10': !notification.read }"
+                                    @click="markAsRead(notification.id)"
+                                >
+                                    {{-- Unread indicator --}}
+                                    <div
+                                        x-show="!notification.read"
+                                        class="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary"
+                                    ></div>
+
+                                    <div class="flex gap-3 pl-4">
+                                        {{-- Icon --}}
+                                        <div class="flex-shrink-0">
+                                            <div
+                                                class="size-10 rounded-full flex items-center justify-center"
+                                                :class="{
+                                                    'bg-success/20 text-success': notification.type === 'success',
+                                                    'bg-danger/20 text-danger': notification.type === 'danger' || notification.type === 'warning',
+                                                    'bg-primary/20 text-primary': notification.type === 'info',
+                                                    'bg-message/20 text-message': notification.type === 'message'
+                                                }"
+                                            >
+                                                <x-frietzakje-icon :name="notification.icon" class="text-xl" x-bind:name="notification.icon" />
+                                            </div>
+                                        </div>
+
+                                        {{-- Content --}}
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-semibold" x-text="notification.title"></p>
+                                            <p class="text-xs text-text/70 mt-1" x-text="notification.message"></p>
+                                            <p class="text-xs text-text/50 mt-2" x-text="notification.time"></p>
+                                        </div>
+
+                                        {{-- Dismiss button --}}
+                                        <button
+                                            @click.stop="removeNotification(notification.id)"
+                                            class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <x-frietzakje-icon name="close" class="text-lg text-text/60 hover:text-danger" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Footer --}}
+                        <div class="border-t border-secondary p-3 text-center">
+                            <a href="#" class="text-sm text-primary hover:underline">View all notifications</a>
+                        </div>
+                    </div>
                 </div>
                 @endif
 
