@@ -33,10 +33,7 @@
             'neutral': 'bg-secondary text-text'
         },
         init() {
-            console.log('Toast component initialized');
-            // Listen for native window events as fallback
             window.addEventListener('toast', (e) => {
-                console.log('Native toast event received:', e.detail);
                 const detail = typeof e.detail === 'string' ? { message: e.detail } : e.detail;
                 this.message = detail.message || 'Notification';
                 this.currentVariant = detail.variant || '{{ $variant }}';
@@ -54,7 +51,6 @@
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
     @toast.window="
-        console.log('Alpine @toast.window triggered:', $event.detail);
         const detail = typeof $event.detail === 'string' ? { message: $event.detail } : $event.detail;
         message = detail.message || 'Notification';
         currentVariant = detail.variant || '{{ $variant }}';
