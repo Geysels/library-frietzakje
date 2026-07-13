@@ -21,8 +21,22 @@
 @endphp
 
 <div
-    x-data="{ show: false, message: '' }"
+    x-data="{
+        show: false,
+        message: '',
+        init() {
+            console.log('Toast component initialized');
+            // Listen for native window events as fallback
+            window.addEventListener('toast', (e) => {
+                console.log('Native toast event received:', e.detail);
+                this.message = typeof e.detail === 'string' ? e.detail : (e.detail?.message || 'Notification');
+                this.show = true;
+                setTimeout(() => this.show = false, 3000);
+            });
+        }
+    }"
     x-show="show"
+    x-cloak
     x-transition:enter="transition ease-out duration-200"
     x-transition:enter-start="opacity-0 translate-y-2"
     x-transition:enter-end="opacity-100 translate-y-0"
@@ -30,14 +44,12 @@
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
     @toast.window="
+        console.log('Alpine @toast.window triggered:', $event.detail);
         message = typeof $event.detail === 'string' ? $event.detail : ($event.detail?.message || 'Notification');
         show = true;
-        console.log('Toast triggered:', message);
         setTimeout(() => show = false, 3000)
     "
-    style="display: none;"
-    x-show.important="show"
-    {{ $attributes->class('fixed z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ' . $posClass . ' ' . $varClass) }}
+    {{ $attributes->class('fixed z-[9999] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ' . $posClass . ' ' . $varClass) }}
 >
     <span x-text="message">{{ $slot }}</span>
     <button @click="show = false" class="ml-2 opacity-70 hover:opacity-100" aria-label="Close">
