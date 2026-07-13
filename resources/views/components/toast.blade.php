@@ -29,8 +29,14 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    @toast.window="show = true; message = $event.detail; setTimeout(() => show = false, 3000)"
-    x-cloak
+    @toast.window="
+        message = typeof $event.detail === 'string' ? $event.detail : ($event.detail?.message || 'Notification');
+        show = true;
+        console.log('Toast triggered:', message);
+        setTimeout(() => show = false, 3000)
+    "
+    style="display: none;"
+    x-show.important="show"
     {{ $attributes->class('fixed z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ' . $posClass . ' ' . $varClass) }}
 >
     <span x-text="message">{{ $slot }}</span>
