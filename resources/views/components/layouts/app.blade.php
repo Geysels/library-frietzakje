@@ -35,90 +35,185 @@
 
     {{ $head ?? '' }}
 </head>
-<body class="flex min-h-screen flex-col bg-bg text-text antialiased"
-      x-data="{ sidebarOpen: false }"
+<body class="min-h-screen bg-bg text-text antialiased"
+      x-data="{
+          sidebarOpen: false,
+          notificationCount: {{ $notificationCount ?? 0 }},
+          messageCount: {{ $messageCount ?? 0 }}
+      }"
       :class="{ 'privacy': $store.discreet?.on }">
 
-    {{-- Sidebar Layout --}}
-        <div class="flex flex-1 overflow-hidden">
-            {{-- Sidebar --}}
-            <aside class="fixed inset-y-0 left-0 z-40 flex w-64 flex-shrink-0 flex-col border-r border-secondary bg-bg transition-transform duration-200 lg:static lg:h-screen overflow-y-auto"
-                   :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+    {{-- Top Navigation Bar --}}
+    <nav class="sticky top-0 z-50 border-b border-secondary bg-bg/95 backdrop-blur-sm">
+        <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
+            {{-- Left Section --}}
+            <div class="flex items-center gap-4">
+                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors">
+                    <x-frietzakje-icon name="menu" class="text-2xl" />
+                </button>
 
-                {{-- Sidebar Header --}}
-                <div class="flex h-16 items-center gap-2.5 border-b border-secondary px-4 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
                     @if(file_exists(public_path('logo.svg')))
-                        <img src="{{ asset('logo.svg') }}" alt="{{ config('app.name') }}" class="h-9 w-9 rounded-md" loading="lazy">
+                        <img src="{{ asset('logo.svg') }}" alt="{{ config('app.name') }}" class="h-8 w-8 rounded-md">
                     @endif
-                    <span class="text-h4 font-display font-extrabold">{{ config('app.name') }}</span>
-
-                    {{-- Optional: Discretion Mode Toggle --}}
-                    @if(isset($showDiscreetToggle) && $showDiscreetToggle)
-                        <button type="button"
-                                @click="$store.discreet.on = !$store.discreet.on"
-                                class="ml-auto grid size-9 place-items-center rounded-md text-text/70 transition-colors hover:bg-secondary/40 hover:text-primary"
-                                x-bind:aria-label="$store.discreet.on ? 'Bedragen tonen' : 'Bedragen verbergen'">
-                            <x-frietzakje-icon name="visibility_off" class="text-xl" x-show="$store.discreet.on" />
-                            <x-frietzakje-icon name="visibility" class="text-xl" x-show="!$store.discreet.on" />
-                        </button>
-                    @endif
+                    <h1 class="text-primary text-xl font-display font-bold hidden sm:inline">{{ config('app.name') }}</h1>
                 </div>
 
-                {{-- Sidebar Navigation --}}
-                <nav class="flex-1 p-4" aria-label="Main navigation">
-                    {{ $navigation ?? '' }}
-                </nav>
-
-                {{-- Sidebar Footer (Optional User Menu) --}}
-                @if(isset($userMenu))
-                    <div class="border-t border-secondary p-4 flex-shrink-0">
-                        {{ $userMenu }}
-                    </div>
+                @if(isset($badge))
+                    {{ $badge }}
                 @endif
-            </aside>
+            </div>
 
-            {{-- Mobile Overlay --}}
-            <div x-show="sidebarOpen"
-                 x-cloak
-                 @click="sidebarOpen = false"
-                 x-transition:enter="transition-opacity ease-out duration-200"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition-opacity ease-in duration-150"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 z-30 bg-bg/80 backdrop-blur-sm lg:hidden"></div>
+            {{-- Right Section --}}
+            <div class="flex items-center gap-2">
+                {{-- Search --}}
+                @if(!isset($hideSearch) || !$hideSearch)
+                <button class="hidden sm:grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors">
+                    <x-frietzakje-icon name="search" class="text-xl" />
+                </button>
+                @endif
 
-            {{-- Main Content Wrapper --}}
-            <div class="flex flex-1 flex-col min-w-0">
-                {{-- Mobile Top Bar --}}
-                <header class="flex h-16 items-center gap-4 border-b border-secondary bg-bg px-4 lg:hidden flex-shrink-0">
-                    <button type="button"
-                            @click="sidebarOpen = !sidebarOpen"
-                            class="grid size-9 place-items-center rounded-md transition-colors hover:bg-secondary/40">
-                        <x-frietzakje-icon name="menu" class="text-2xl" />
+                {{-- Notifications with Badge --}}
+                @if(!isset($hideNotifications) || !$hideNotifications)
+                <div class="relative">
+                    <button
+                        class="grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors"
+                        @click="$dispatch('toast', {message: notificationCount > 0 ? 'You have ' + notificationCount + ' new notifications' : 'No new notifications', variant: 'message'})"
+                    >
+                        <x-frietzakje-icon name="notifications" class="text-xl" />
                     </button>
-                    <span class="text-lg font-bold">{{ config('app.name') }}</span>
+                    <span
+                        x-show="notificationCount > 0"
+                        x-text="notificationCount"
+                        x-cloak
+                        class="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-bg"
+                    ></span>
+                </div>
+                @endif
 
-                    {{-- Mobile Discretion Toggle --}}
-                    @if(isset($showDiscreetToggle) && $showDiscreetToggle)
-                        <button type="button"
-                                @click="$store.discreet.on = !$store.discreet.on"
-                                class="ml-auto grid size-9 place-items-center rounded-md text-text/70 transition-colors hover:bg-secondary/40 hover:text-primary">
-                            <x-frietzakje-icon name="visibility_off" class="text-xl" x-show="$store.discreet.on" />
-                            <x-frietzakje-icon name="visibility" class="text-xl" x-show="!$store.discreet.on" />
-                        </button>
-                    @endif
-                </header>
+                {{-- Messages --}}
+                @if(!isset($hideMessages) || !$hideMessages)
+                <div class="relative hidden md:block">
+                    <button class="grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors">
+                        <x-frietzakje-icon name="mail" class="text-xl" />
+                    </button>
+                    <span
+                        x-show="messageCount > 0"
+                        x-text="messageCount"
+                        x-cloak
+                        class="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-bg"
+                    ></span>
+                </div>
+                @endif
 
-                {{-- Main Content Area --}}
-                <main class="flex-1 overflow-y-auto">
-                    <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-                        {{ $slot }}
+                {{-- Discretion Mode Toggle --}}
+                @if(isset($showDiscreetToggle) && $showDiscreetToggle)
+                <button type="button"
+                        @click="$store.discreet.on = !$store.discreet.on"
+                        class="hidden md:grid size-9 place-items-center rounded-md text-text/70 transition-colors hover:bg-secondary/40 hover:text-primary"
+                        x-bind:aria-label="$store.discreet.on ? 'Show amounts' : 'Hide amounts'">
+                    <x-frietzakje-icon name="visibility_off" class="text-xl" x-show="$store.discreet.on" />
+                    <x-frietzakje-icon name="visibility" class="text-xl" x-show="!$store.discreet.on" />
+                </button>
+                @endif
+
+                {{-- Custom Top Actions --}}
+                @if(isset($topActions))
+                    {{ $topActions }}
+                @endif
+
+                {{-- User Menu --}}
+                @if(isset($userName) || isset($topUserMenu))
+                <div class="flex items-center gap-2 ml-2 pl-2 border-l border-secondary" x-data="{ userMenuOpen: false }">
+                    <button
+                        @click="userMenuOpen = !userMenuOpen"
+                        class="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-secondary/40 transition-colors"
+                    >
+                        <x-frietzakje-avatar size="sm" />
+                        @if(isset($userName))
+                            <span class="text-sm font-medium hidden md:inline">{{ $userName }}</span>
+                        @endif
+                        <x-frietzakje-icon name="expand_more" class="text-lg" />
+                    </button>
+
+                    {{-- User Dropdown --}}
+                    <div
+                        x-show="userMenuOpen"
+                        @click.outside="userMenuOpen = false"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute right-4 top-14 w-56 rounded-lg border border-secondary bg-bg shadow-xl"
+                        x-cloak
+                    >
+                        @if(isset($topUserMenu))
+                            {{ $topUserMenu }}
+                        @else
+                            <div class="p-3 border-b border-secondary">
+                                <p class="font-semibold">{{ $userName ?? 'User' }}</p>
+                                @if(isset($userEmail))
+                                    <p class="text-xs text-text/60">{{ $userEmail }}</p>
+                                @endif
+                            </div>
+                            <div class="py-2">
+                                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-secondary/40 transition-colors">
+                                    <x-frietzakje-icon name="person" class="text-lg" />
+                                    Profile
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-secondary/40 transition-colors">
+                                    <x-frietzakje-icon name="settings" class="text-lg" />
+                                    Settings
+                                </a>
+                            </div>
+                        @endif
                     </div>
-                </main>
+                </div>
+                @endif
             </div>
         </div>
+    </nav>
+
+    {{-- Main Layout --}}
+    <div class="flex min-h-[calc(100vh-4rem)]">
+        {{-- Sidebar --}}
+        <aside class="fixed inset-y-16 left-0 z-40 w-64 flex-shrink-0 border-r border-secondary bg-bg transition-transform duration-200 lg:static lg:inset-y-0 overflow-y-auto"
+               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+
+            {{-- Sidebar Navigation --}}
+            <nav class="flex-1 p-4" aria-label="Main navigation">
+                {{ $navigation ?? '' }}
+            </nav>
+
+            {{-- Sidebar Footer (Optional User Menu) --}}
+            @if(isset($sidebarFooter))
+                <div class="border-t border-secondary p-4 flex-shrink-0">
+                    {{ $sidebarFooter }}
+                </div>
+            @endif
+        </aside>
+
+        {{-- Mobile Overlay --}}
+        <div x-show="sidebarOpen"
+             x-cloak
+             @click="sidebarOpen = false"
+             x-transition:enter="transition-opacity ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-30 bg-bg/80 backdrop-blur-sm lg:hidden"></div>
+
+        {{-- Main Content --}}
+        <main class="flex-1 min-w-0 overflow-x-hidden overflow-y-auto">
+            <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+                {{ $slot }}
+            </div>
+        </main>
+    </div>
 
     {{-- Footer --}}
     @if(isset($showFooter) && $showFooter)
