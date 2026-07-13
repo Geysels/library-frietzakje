@@ -38,14 +38,15 @@
         $flatpickrOptions['inline'] = true;
     }
 
-    $flatpickrOptionsJson = json_encode($flatpickrOptions);
+    $flatpickrOptionsJson = htmlspecialchars(json_encode($flatpickrOptions), ENT_QUOTES, 'UTF-8');
 @endphp
 
 <div class="grid gap-1"
      x-data="{
         picker: null,
+        options: JSON.parse('{{ $flatpickrOptionsJson }}'),
         init() {
-            this.picker = flatpickr(this.$refs.input, {!! $flatpickrOptionsJson !!});
+            this.picker = flatpickr(this.$refs.input, this.options);
         }
      }"
      x-init="init()">
