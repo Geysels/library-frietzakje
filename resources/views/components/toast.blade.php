@@ -24,12 +24,22 @@
     x-data="{
         show: false,
         message: '',
+        currentVariant: '{{ $variant }}',
+        variantClasses: {
+            'primary': 'bg-primary text-bg',
+            'success': 'bg-success text-bg',
+            'danger': 'bg-danger text-bg',
+            'message': 'bg-message text-bg',
+            'neutral': 'bg-secondary text-text'
+        },
         init() {
             console.log('Toast component initialized');
             // Listen for native window events as fallback
             window.addEventListener('toast', (e) => {
                 console.log('Native toast event received:', e.detail);
-                this.message = typeof e.detail === 'string' ? e.detail : (e.detail?.message || 'Notification');
+                const detail = typeof e.detail === 'string' ? { message: e.detail } : e.detail;
+                this.message = detail.message || 'Notification';
+                this.currentVariant = detail.variant || '{{ $variant }}';
                 this.show = true;
                 setTimeout(() => this.show = false, 3000);
             });
@@ -45,11 +55,14 @@
     x-transition:leave-end="opacity-0"
     @toast.window="
         console.log('Alpine @toast.window triggered:', $event.detail);
-        message = typeof $event.detail === 'string' ? $event.detail : ($event.detail?.message || 'Notification');
+        const detail = typeof $event.detail === 'string' ? { message: $event.detail } : $event.detail;
+        message = detail.message || 'Notification';
+        currentVariant = detail.variant || '{{ $variant }}';
         show = true;
         setTimeout(() => show = false, 3000)
     "
-    {{ $attributes->class('fixed z-[9999] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ' . $posClass . ' ' . $varClass) }}
+    :class="variantClasses[currentVariant]"
+    {{ $attributes->class('fixed z-[9999] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ' . $posClass) }}
 >
     <span x-text="message">{{ $slot }}</span>
     <button @click="show = false" class="ml-2 opacity-70 hover:opacity-100" aria-label="Close">
