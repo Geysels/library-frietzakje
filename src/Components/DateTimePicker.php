@@ -11,7 +11,15 @@ class DateTimePicker extends Component
         public ?string $help = null,
         public ?string $error = null,
         public ?string $name = null,
-        public string $type = 'date',
+        public ?string $placeholder = null,
+        public ?string $value = null,
+        public string $mode = 'datetime',
+        public string $timeFormat = '24hr',
+        public ?string $dateFormat = null,
+        public ?string $minDate = null,
+        public ?string $maxDate = null,
+        public ?string $defaultDate = null,
+        public bool $inline = false,
     ) {
     }
 

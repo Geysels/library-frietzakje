@@ -5,6 +5,7 @@ use Frietzakje\Ui\Components\Banner;
 use Frietzakje\Ui\Components\Button;
 use Frietzakje\Ui\Components\Card;
 use Frietzakje\Ui\Components\Container;
+use Frietzakje\Ui\Components\DateTimePicker;
 use Frietzakje\Ui\Components\Grid;
 use Frietzakje\Ui\Components\Input;
 use Frietzakje\Ui\Components\Toast;
@@ -144,4 +145,37 @@ test('toast renders with position classes', function () {
         $html = Blade::render("<x-frietzakje::toast position=\"{$position}\" />");
         expect($html)->toContain('fixed');
     }
+});
+
+test('datetime picker component renders correctly', function () {
+    $component = new DateTimePicker();
+    $view = $component->render();
+
+    expect($view->name())->toBe('frietzakje::components.date-time-picker');
+});
+
+test('datetime picker renders with different modes', function () {
+    $modes = ['date', 'time', 'datetime'];
+
+    foreach ($modes as $mode) {
+        $html = Blade::render("<x-frietzakje::date-time-picker name=\"test\" mode=\"{$mode}\" />");
+        expect($html)->toContain('flatpickr');
+    }
+});
+
+test('datetime picker renders with label and placeholder', function () {
+    $html = Blade::render('<x-frietzakje::date-time-picker name="meeting" label="Meeting Time" placeholder="Select date" />');
+
+    expect($html)
+        ->toContain('Meeting Time')
+        ->toContain('placeholder="Select date"')
+        ->toContain('name="meeting"');
+});
+
+test('datetime picker shows error state', function () {
+    $html = Blade::render('<x-frietzakje::date-time-picker name="date" error="Date is required" />');
+
+    expect($html)
+        ->toContain('Date is required')
+        ->toContain('border-danger');
 });
