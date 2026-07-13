@@ -211,7 +211,7 @@
                                                     'bg-message/20 text-message': notification.type === 'message'
                                                 }"
                                             >
-                                                <x-frietzakje-icon :name="notification.icon" class="text-xl" x-bind:name="notification.icon" />
+                                                <span class="material-symbols-outlined text-xl" x-text="notification.icon"></span>
                                             </div>
                                         </div>
 
