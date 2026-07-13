@@ -38,19 +38,13 @@
         $flatpickrOptions['inline'] = true;
     }
 
-    // JSON encode with flags safe for HTML attributes
-    $flatpickrOptionsJson = json_encode($flatpickrOptions, JSON_HEX_APOS | JSON_HEX_QUOT);
+    $flatpickrOptionsJson = json_encode($flatpickrOptions);
 @endphp
 
 <div class="grid gap-1"
-     x-data="{
-        picker: null,
-        options: JSON.parse('{!! $flatpickrOptionsJson !!}'),
-        init() {
-            this.picker = flatpickr(this.$refs.input, this.options);
-        }
-     }"
-     x-init="init()">
+     x-data="{ picker: null }"
+     x-init="picker = flatpickr($refs.input, JSON.parse($el.dataset.options))"
+     data-options="{{ $flatpickrOptionsJson }}">
     @if($label)
         <label for="{{ $id }}" class="text-sm">{{ $label }}</label>
     @endif
