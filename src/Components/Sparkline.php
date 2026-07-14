@@ -11,7 +11,7 @@ class Sparkline extends Component
      */
     public function __construct(
         public array $series = [],
-        public string $variant = 'primary',
+        public string $variant = 'neutral',
         public int $height = 40,
         public int $width = 120,
         public bool $area = true,

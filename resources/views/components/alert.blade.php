@@ -1,18 +1,33 @@
 @php
     $base = 'rounded-lg border p-4';
 
+    // `warning` used to be aliased to accent-2, so a warning rendered blue. It has its own
+    // token now — an alert that means "be careful" cannot be the same hue as one that means
+    // "here is some information".
     $variants = [
-        'info' => 'border-message/40 bg-message/10 text-message',
+        'neutral' => 'border-secondary bg-secondary/40 text-text/80',
+        'primary' => 'border-primary/40 bg-primary/15 text-primary',
+        'secondary' => 'border-secondary bg-secondary text-text',
         'success' => 'border-success/40 bg-success/10 text-success',
-        'warning' => 'border-accent-2/40 bg-accent-2/10 text-accent-2',
+        'warning' => 'border-warning/40 bg-warning/10 text-warning',
         'danger' => 'border-danger/40 bg-danger/10 text-danger',
+        'message' => 'border-message/40 bg-message/10 text-message',
+        'accent' => 'border-accent/40 bg-accent/15 text-accent-2',
+        'accent-2' => 'border-accent-2/40 bg-accent-2/10 text-accent-2',
+        'info' => 'border-message/40 bg-message/10 text-message',
     ];
 
     $icons = [
-        'info' => 'info',
+        'neutral' => 'info',
+        'primary' => 'campaign',
+        'secondary' => 'info',
         'success' => 'check_circle',
         'warning' => 'warning',
         'danger' => 'error',
+        'message' => 'info',
+        'accent' => 'info',
+        'accent-2' => 'info',
+        'info' => 'info',
     ];
 
     $classes = $base.' '.($variants[$variant] ?? $variants['info']);
@@ -20,7 +35,7 @@
 
 <div {{ $attributes->class($classes) }} @if($dismissible) x-data="{ show: true }" x-show="show" @endif>
     <div class="flex items-start gap-3">
-        <x-frietzakje-icon :name="$icons[$variant] ?? 'info'" class="text-xl shrink-0" />
+        <x-frietzakje-icon :name="$icon ?? $icons[$variant] ?? 'info'" class="text-xl shrink-0" />
 
         <div class="flex-1 space-y-1">
             @if($title)

@@ -1,22 +1,32 @@
 @php
     $strokes = [
+        // A trend line is usually just reporting a shape, not raising an alarm — so neutral
+        // is available and is what most callers should use.
+        'neutral' => 'stroke-text/40',
         'primary' => 'stroke-primary',
+        'secondary' => 'stroke-secondary',
         'success' => 'stroke-success',
+        'warning' => 'stroke-warning',
         'danger' => 'stroke-danger',
         'message' => 'stroke-message',
+        'accent' => 'stroke-accent',
         'accent-2' => 'stroke-accent-2',
     ];
 
     $fills = [
+        'neutral' => 'fill-text/5',
         'primary' => 'fill-primary/15',
+        'secondary' => 'fill-secondary/30',
         'success' => 'fill-success/15',
+        'warning' => 'fill-warning/15',
         'danger' => 'fill-danger/15',
         'message' => 'fill-message/15',
+        'accent' => 'fill-accent/15',
         'accent-2' => 'fill-accent-2/15',
     ];
 
-    $stroke = $strokes[$variant] ?? $strokes['primary'];
-    $fill = $fills[$variant] ?? $fills['primary'];
+    $stroke = $strokes[$variant] ?? $strokes['neutral'];
+    $fill = $fills[$variant] ?? $fills['neutral'];
 @endphp
 
 @if (count($series) > 1)

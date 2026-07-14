@@ -9,11 +9,15 @@
     ];
 
     $variantClasses = [
+        'neutral' => 'bg-secondary text-text',
         'primary' => 'bg-primary text-bg',
+        'secondary' => 'bg-secondary text-text',
         'success' => 'bg-success text-bg',
+        'warning' => 'bg-warning text-bg',
         'danger' => 'bg-danger text-bg',
         'message' => 'bg-message text-bg',
-        'neutral' => 'bg-secondary text-text',
+        'accent' => 'bg-accent text-text',
+        'accent-2' => 'bg-accent-2 text-text',
     ];
 
     $posClass = $positionClasses[$position] ?? $positionClasses['top-right'];
@@ -26,13 +30,9 @@
         message: '',
         timer: null,
         currentVariant: '{{ $variant }}',
-        variantClasses: {
-            'primary': 'bg-primary text-bg',
-            'success': 'bg-success text-bg',
-            'danger': 'bg-danger text-bg',
-            'message': 'bg-message text-bg',
-            'neutral': 'bg-secondary text-text'
-        },
+        {{-- This map is what actually colours the toast at runtime: it is keyed by the variant
+             carried on the dispatched event, so it has to stay in step with the PHP map above. --}}
+        variantClasses: @js($variantClasses),
         fire(detail) {
             detail = typeof detail === 'string' ? { message: detail } : (detail || {});
             this.message = detail.message || 'Notification';

@@ -1,10 +1,14 @@
 @php
     $variantClasses = [
+        'neutral' => 'bg-secondary text-text',
         'primary' => 'bg-primary text-bg',
+        'secondary' => 'bg-secondary text-text',
         'success' => 'bg-success text-bg',
+        'warning' => 'bg-warning text-bg',
         'danger' => 'bg-danger text-bg',
         'message' => 'bg-message text-bg',
-        'neutral' => 'bg-secondary text-text',
+        'accent' => 'bg-accent text-text',
+        'accent-2' => 'bg-accent-2 text-text',
     ];
 
     $varClass = $variantClasses[$variant] ?? $variantClasses['primary'];

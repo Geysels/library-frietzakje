@@ -2,10 +2,17 @@
     $percentage = min(100, max(0, ($value / max(1, $max)) * 100));
 
     $variants = [
+        // Neutral first, and it is the sane default for a bar that is merely reporting a
+        // number. Reach for a colour only when the value itself means something is wrong.
+        'neutral' => 'bg-text/30',
         'primary' => 'bg-primary',
+        'secondary' => 'bg-secondary',
         'success' => 'bg-success',
+        'warning' => 'bg-warning',
         'danger' => 'bg-danger',
         'message' => 'bg-message',
+        'accent' => 'bg-accent',
+        'accent-2' => 'bg-accent-2',
     ];
 
     $barClass = $variants[$variant] ?? $variants['primary'];

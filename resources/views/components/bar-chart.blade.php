@@ -1,11 +1,16 @@
 @php
     $bars = [
+        // Bars are categories, and categories are not states — so the default is neutral and a
+        // coloured bar has to earn it by meaning something.
+        'neutral' => 'bg-text/25',
         'primary' => 'bg-primary',
+        'secondary' => 'bg-secondary',
         'success' => 'bg-success',
+        'warning' => 'bg-warning',
         'danger' => 'bg-danger',
         'message' => 'bg-message',
+        'accent' => 'bg-accent',
         'accent-2' => 'bg-accent-2',
-        'secondary' => 'bg-secondary',
     ];
 @endphp
 

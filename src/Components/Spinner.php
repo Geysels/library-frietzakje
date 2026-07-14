@@ -8,6 +8,7 @@ class Spinner extends Component
 {
     public function __construct(
         public string $size = 'md',
+        public string $variant = 'current',
     ) {
     }
 

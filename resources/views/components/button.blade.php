@@ -10,7 +10,9 @@
         'success' => 'bg-success text-bg font-bold hover:brightness-95 focus-visible:ring-success',
         'danger' => 'bg-danger text-bg font-bold hover:brightness-95 focus-visible:ring-danger',
         'message' => 'bg-message text-bg font-bold hover:brightness-95 focus-visible:ring-message',
+        'warning' => 'bg-warning text-bg font-bold hover:brightness-95 focus-visible:ring-warning',
         'secondary' => 'bg-secondary text-text font-bold hover:brightness-95 focus-visible:ring-secondary',
+        'neutral' => 'bg-secondary text-text font-bold hover:brightness-95 focus-visible:ring-secondary',
         'accent' => 'bg-accent text-text font-bold hover:brightness-95 focus-visible:ring-accent',
         'accent-2' => 'bg-accent-2 text-text font-bold hover:brightness-95 focus-visible:ring-accent-2',
 
@@ -18,6 +20,7 @@
         'primary-outline' => 'border-2 border-primary text-primary hover:bg-primary/10 focus-visible:ring-primary',
         'success-outline' => 'border-2 border-success text-success hover:bg-success/10 focus-visible:ring-success',
         'danger-outline' => 'border-2 border-danger text-danger hover:bg-danger/10 focus-visible:ring-danger',
+        'warning-outline' => 'border-2 border-warning text-warning hover:bg-warning/10 focus-visible:ring-warning',
         'message-outline' => 'border-2 border-message text-message hover:bg-message/10 focus-visible:ring-message',
         'secondary-outline' => 'border-2 border-secondary text-text hover:bg-secondary/40 focus-visible:ring-secondary',
         'accent-outline' => 'border-2 border-accent text-accent hover:bg-accent/10 focus-visible:ring-accent',

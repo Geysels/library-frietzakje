@@ -14,7 +14,7 @@ class BarChart extends Component
      */
     public function __construct(
         public array $series = [],
-        public string $variant = 'primary',
+        public string $variant = 'neutral',
         public int $height = 160,
         public ?string $prefix = null,
         public ?string $suffix = null,

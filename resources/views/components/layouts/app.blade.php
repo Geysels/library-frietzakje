@@ -38,57 +38,39 @@
 <body class="min-h-screen bg-bg text-text antialiased"
       x-data="{
           sidebarOpen: false,
-          notificationCount: {{ $notificationCount ?? 3 }},
           messageCount: {{ $messageCount ?? 0 }},
           notificationPanelOpen: false,
-          notifications: [
-              {
-                  id: 1,
-                  type: 'success',
-                  icon: 'check_circle',
-                  title: 'Deployment successful',
-                  message: 'Your application has been deployed to production.',
-                  time: '5 minutes ago',
-                  read: false
-              },
-              {
-                  id: 2,
-                  type: 'warning',
-                  icon: 'warning',
-                  title: 'High memory usage',
-                  message: 'Server memory usage is at 85%. Consider scaling up.',
-                  time: '1 hour ago',
-                  read: false
-              },
-              {
-                  id: 3,
-                  type: 'info',
-                  icon: 'info',
-                  title: 'New update available',
-                  message: 'Version 2.5.0 is now available with new features.',
-                  time: '2 hours ago',
-                  read: false
-              }
-          ],
+
+          {{-- The list is a prop, not a hardcoded fixture. It used to ship three invented
+               notifications ('Deployment successful', 'High memory usage') baked into the
+               layout, which meant no application could ever put a real one there — so pages
+               grew their own alert banners instead and said everything twice.
+
+               Each notification: { id, type, icon, title, message, time, url?, read? }
+               `type` is any palette variant; `url` makes the row a link to the thing it is
+               telling you about. --}}
+          notifications: @js(collect($notifications ?? [])->map(fn ($n) => $n + ['read' => $n['read'] ?? false])->values()),
+
+          {{-- The badge reads this getter, so the count is derived from the list and cannot
+               drift out of step with it. The old code also kept a separate `notificationCount`
+               and hand-assigned it in four places — a second source of truth for the same
+               number, which is exactly how a bell ends up claiming 3 unread over an empty
+               panel. --}}
           get unreadCount() {
               return this.notifications.filter(n => !n.read).length;
           },
           markAsRead(id) {
               const notif = this.notifications.find(n => n.id === id);
               if (notif) notif.read = true;
-              this.notificationCount = this.unreadCount;
           },
           markAllAsRead() {
               this.notifications.forEach(n => n.read = true);
-              this.notificationCount = 0;
           },
           removeNotification(id) {
               this.notifications = this.notifications.filter(n => n.id !== id);
-              this.notificationCount = this.unreadCount;
           },
           clearAll() {
               this.notifications = [];
-              this.notificationCount = 0;
               this.notificationPanelOpen = false;
           }
       }"
@@ -188,8 +170,12 @@
                             </template>
 
                             <template x-for="notification in notifications" :key="notification.id">
-                                <div
-                                    class="border-b border-secondary/40 p-4 hover:bg-secondary/20 transition-colors cursor-pointer relative group"
+                                {{-- A notification that tells you something is wrong but gives you
+                                     nowhere to go is just an interruption, so the row is a link
+                                     whenever the caller supplies a `url`. --}}
+                                <a
+                                    :href="notification.url || '#'"
+                                    class="block border-b border-secondary/40 p-4 hover:bg-secondary/20 transition-colors cursor-pointer relative group"
                                     :class="{ 'bg-secondary/10': !notification.read }"
                                     @click="markAsRead(notification.id)"
                                 >
@@ -200,15 +186,20 @@
                                     ></div>
 
                                     <div class="flex gap-3 pl-4">
-                                        {{-- Icon --}}
+                                        {{-- Icon. `warning` has its own colour now — it used to be
+                                             lumped in with danger, so "expiring soon" and "already
+                                             broken" shouted at exactly the same volume. --}}
                                         <div class="flex-shrink-0">
                                             <div
                                                 class="size-10 rounded-full flex items-center justify-center"
                                                 :class="{
+                                                    'bg-secondary/60 text-text/70': ! notification.type || notification.type === 'neutral',
                                                     'bg-success/20 text-success': notification.type === 'success',
-                                                    'bg-danger/20 text-danger': notification.type === 'danger' || notification.type === 'warning',
-                                                    'bg-primary/20 text-primary': notification.type === 'info',
-                                                    'bg-message/20 text-message': notification.type === 'message'
+                                                    'bg-warning/20 text-warning': notification.type === 'warning',
+                                                    'bg-danger/20 text-danger': notification.type === 'danger',
+                                                    'bg-primary/20 text-primary': notification.type === 'primary',
+                                                    'bg-message/20 text-message': notification.type === 'message' || notification.type === 'info',
+                                                    'bg-accent-2/20 text-accent-2': notification.type === 'accent-2'
                                                 }"
                                             >
                                                 <span class="material-symbols-outlined text-xl" x-text="notification.icon"></span>
@@ -224,13 +215,15 @@
 
                                         {{-- Dismiss button --}}
                                         <button
-                                            @click.stop="removeNotification(notification.id)"
+                                            type="button"
+                                            @click.stop.prevent="removeNotification(notification.id)"
                                             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            aria-label="Dismiss notification"
                                         >
                                             <x-frietzakje-icon name="close" class="text-lg text-text/60 hover:text-danger" />
                                         </button>
                                     </div>
-                                </div>
+                                </a>
                             </template>
                         </div>
 
@@ -359,18 +352,26 @@
              class="fixed inset-0 z-30 bg-bg/80 backdrop-blur-sm lg:hidden"></div>
 
         {{-- Main Content.
-             `fluid` drops the centered max-width column — needed by full-bleed screens
-             like a split-view inbox or a kanban board, which have to own the viewport. --}}
-        {{-- No `overflow-y-auto` here: it would make <main> the scroll container instead of
-             the window, which silently breaks `position: sticky` for everything inside it
-             (in-page nav, sticky save bars, sticky table headers). --}}
+
+             Content fills the width. An app screen is not an article: the sidebar already takes
+             256px, and centring what is left inside a max-w-7xl column buys empty gutters at the
+             cost of the table you were trying to read. A page that genuinely wants to be narrow
+             (a wizard, a settings form) constrains itself — that is a decision for the page to
+             make, not a tax on every page.
+
+             `fluid` additionally drops the padding, for screens that must reach the edges: the
+             split-view inbox, the kanban board, the planner grid.
+
+             No `overflow-y-auto` here: it would make <main> the scroll container instead of the
+             window, which silently breaks `position: sticky` for everything inside it (in-page
+             nav, sticky save bars, sticky table headers). --}}
         <main class="min-w-0 flex-1 overflow-x-hidden">
             @if ($fluid ?? false)
                 <div class="w-full">
                     {{ $slot }}
                 </div>
             @else
-                <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+                <div class="w-full px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
                     {{ $slot }}
                 </div>
             @endif
@@ -380,7 +381,7 @@
     {{-- Footer --}}
     @if(isset($showFooter) && $showFooter)
         <footer class="border-t border-secondary/60 bg-bg flex-shrink-0">
-            <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+            <div class="w-full px-4 py-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col gap-3 text-xs text-text/50 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex items-center gap-3">
                         <span>&copy; {{ now()->year }} {{ config('app.name') }}. Alle rechten voorbehouden.</span>

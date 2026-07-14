@@ -10,7 +10,7 @@ class Stat extends Component
         public string $label,
         public ?string $value = null,
         public ?string $icon = null,
-        public string $variant = 'primary',
+        public string $variant = 'neutral',
         public ?string $trend = null,
         public string $trendDirection = 'flat',
         public ?string $caption = null,

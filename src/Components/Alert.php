@@ -10,6 +10,7 @@ class Alert extends Component
         public string $variant = 'info',
         public bool $dismissible = false,
         public ?string $title = null,
+        public ?string $icon = null,
     ) {
     }
 
