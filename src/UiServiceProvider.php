@@ -30,6 +30,7 @@ class UiServiceProvider extends ServiceProvider
         $this->loadViewComponentsAs('frietzakje', [
             Components\Accordion::class,
             Components\Alert::class,
+            Components\AppSwitcher::class,
             Components\Avatar::class,
             Components\AvatarGroup::class,
             Components\Badge::class,

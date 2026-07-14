@@ -19,9 +19,13 @@
 @endphp
 
 {{-- The width rides on a CSS custom property rather than an inline `width:`, so a caller can
-     drive it from Alpine — :style="`--fz-progress: ${pct}%`" — instead of having to hand-roll
-     a bar whenever the value is client-side state. --}}
-<div {{ $attributes->class('space-y-1') }}>
+     drive it from Alpine — x-bind:style="{'--fz-progress': pct + '%'}" — instead of having to
+     hand-roll a bar whenever the value is client-side state.
+
+     The property is declared on the ROOT and inherited by the bar, not declared on the bar
+     itself: a declaration on the bar would be a value on that element and would win over
+     anything a caller could reach, which made the binding above silently do nothing. --}}
+<div {{ $attributes->merge(['style' => "--fz-progress: {$percentage}%"])->class('space-y-1') }}>
     @if ($showLabel)
         <div class="flex justify-between text-sm text-text/70">
             <span>{{ $slot }}</span>
@@ -32,7 +36,6 @@
     <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div
             class="fz-progress-bar {{ $barClass }} h-full rounded-full transition-all duration-300 ease-out"
-            style="--fz-progress: {{ $percentage }}%"
             role="progressbar"
             aria-valuenow="{{ $value }}"
             aria-valuemin="0"

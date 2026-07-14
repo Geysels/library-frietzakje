@@ -92,6 +92,12 @@
                     <h1 class="text-primary text-xl font-display font-bold hidden sm:inline">{{ config('app.name') }}</h1>
                 </div>
 
+                {{-- The suite launcher. Each app in the ecosystem is its own deployment, so
+                     this is the only thing that lets a user move between them — and the only
+                     reason several separate apps read as one product. It renders nothing when
+                     there is nowhere to switch to. --}}
+                <x-frietzakje-app-switcher class="hidden sm:block" />
+
                 @if(isset($badge))
                     {{ $badge }}
                 @endif
