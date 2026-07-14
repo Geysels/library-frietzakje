@@ -12,6 +12,8 @@ class Input extends Component
         public ?string $help = null,
         public ?string $error = null,
         public ?string $name = null,
+        public ?string $icon = null,
+        public ?string $trailingIcon = null,
     ) {
     }
 

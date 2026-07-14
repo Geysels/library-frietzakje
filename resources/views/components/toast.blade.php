@@ -24,6 +24,7 @@
     x-data="{
         show: false,
         message: '',
+        timer: null,
         currentVariant: '{{ $variant }}',
         variantClasses: {
             'primary': 'bg-primary text-bg',
@@ -32,14 +33,16 @@
             'message': 'bg-message text-bg',
             'neutral': 'bg-secondary text-text'
         },
-        init() {
-            window.addEventListener('toast', (e) => {
-                const detail = typeof e.detail === 'string' ? { message: e.detail } : e.detail;
-                this.message = detail.message || 'Notification';
-                this.currentVariant = detail.variant || '{{ $variant }}';
-                this.show = true;
-                setTimeout(() => this.show = false, 3000);
-            });
+        fire(detail) {
+            detail = typeof detail === 'string' ? { message: detail } : (detail || {});
+            this.message = detail.message || 'Notification';
+            this.currentVariant = detail.variant || '{{ $variant }}';
+            this.show = true;
+
+            // Restart the countdown on every toast. Without this, a toast fired while a
+            // previous one is still up inherits the older timer and vanishes early.
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => this.show = false, detail.duration || 3000);
         }
     }"
     x-show="show"
@@ -50,13 +53,7 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    @toast.window="
-        const detail = typeof $event.detail === 'string' ? { message: $event.detail } : $event.detail;
-        message = detail.message || 'Notification';
-        currentVariant = detail.variant || '{{ $variant }}';
-        show = true;
-        setTimeout(() => show = false, 3000)
-    "
+    @toast.window="fire($event.detail)"
     :class="variantClasses[currentVariant]"
     {{ $attributes->class('fixed z-[9999] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ' . $posClass) }}
 >

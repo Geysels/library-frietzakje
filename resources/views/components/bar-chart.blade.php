@@ -1,0 +1,42 @@
+@php
+    $bars = [
+        'primary' => 'bg-primary',
+        'success' => 'bg-success',
+        'danger' => 'bg-danger',
+        'message' => 'bg-message',
+        'accent-2' => 'bg-accent-2',
+        'secondary' => 'bg-secondary',
+    ];
+@endphp
+
+<div {{ $attributes->class('space-y-3') }}>
+    <div class="flex items-end gap-2" style="height: {{ $height }}px">
+        @foreach ($series as $datum)
+            @php
+                $barClass = $bars[$datum['variant'] ?? $variant] ?? $bars['primary'];
+            @endphp
+
+            <div class="group flex h-full flex-1 flex-col justify-end gap-2">
+                {{-- Value sits above the bar and only appears on hover, so the chart stays
+                     readable at a glance but stays inspectable. --}}
+                <span @class([
+                    'text-center font-display text-xs font-semibold text-text opacity-0 transition-opacity duration-150 group-hover:opacity-100',
+                    'sensitive' => $sensitive,
+                ])>{{ $formatted($datum) }}</span>
+
+                <div
+                    class="{{ $barClass }} w-full rounded-t transition-all duration-300 ease-out group-hover:brightness-110"
+                    style="height: {{ $percentFor($datum) }}%"
+                    role="img"
+                    aria-label="{{ $datum['label'] }}: {{ $formatted($datum) }}"
+                ></div>
+            </div>
+        @endforeach
+    </div>
+
+    <div class="flex gap-2">
+        @foreach ($series as $datum)
+            <span class="flex-1 text-center text-xs text-text/50">{{ $datum['label'] }}</span>
+        @endforeach
+    </div>
+</div>

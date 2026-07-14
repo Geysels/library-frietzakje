@@ -358,11 +358,22 @@
              x-transition:leave-end="opacity-0"
              class="fixed inset-0 z-30 bg-bg/80 backdrop-blur-sm lg:hidden"></div>
 
-        {{-- Main Content --}}
-        <main class="flex-1 min-w-0 overflow-x-hidden overflow-y-auto">
-            <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-                {{ $slot }}
-            </div>
+        {{-- Main Content.
+             `fluid` drops the centered max-width column — needed by full-bleed screens
+             like a split-view inbox or a kanban board, which have to own the viewport. --}}
+        {{-- No `overflow-y-auto` here: it would make <main> the scroll container instead of
+             the window, which silently breaks `position: sticky` for everything inside it
+             (in-page nav, sticky save bars, sticky table headers). --}}
+        <main class="min-w-0 flex-1 overflow-x-hidden">
+            @if ($fluid ?? false)
+                <div class="w-full">
+                    {{ $slot }}
+                </div>
+            @else
+                <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+                    {{ $slot }}
+                </div>
+            @endif
         </main>
     </div>
 

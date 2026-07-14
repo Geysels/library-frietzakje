@@ -4,17 +4,17 @@ namespace Frietzakje\Ui\Components;
 
 use Illuminate\View\Component;
 
-class Card extends Component
+class DropdownItem extends Component
 {
     public function __construct(
-        public bool $hoverable = false,
-        public bool $padded = true,
+        public ?string $href = null,
+        public ?string $icon = null,
         public string $variant = 'default',
     ) {
     }
 
     public function render()
     {
-        return view('frietzakje::components.card');
+        return view('frietzakje::components.dropdown-item');
     }
 }
