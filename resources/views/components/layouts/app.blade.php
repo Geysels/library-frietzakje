@@ -6,14 +6,14 @@
     <meta name="theme-color" content="#1b1b1e">
     <title>{{ $title ?? config('app.name') }}</title>
 
-    {{-- Favicon --}}
-    <link rel="icon" type="image/svg+xml" href="{{ asset('logo.svg') }}">
-    <link rel="alternate icon" type="image/png" href="{{ asset('logo-64.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('logo-256.png') }}">
+    {{-- Favicons + web app manifest (realfavicongenerator.net set, served from public root). --}}
+    <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 
-    {{-- PWA --}}
-    @if(file_exists(public_path('manifest.webmanifest')))
-        <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+    @if(file_exists(public_path('site.webmanifest')))
+        <link rel="manifest" href="{{ asset('site.webmanifest') }}">
         <meta name="application-name" content="{{ config('app.name') }}">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
@@ -35,7 +35,7 @@
 
     {{ $head ?? '' }}
 </head>
-<body class="min-h-screen bg-bg text-text antialiased"
+<body class="flex h-dvh flex-col overflow-hidden bg-bg text-text antialiased"
       x-data="{
           sidebarOpen: false,
           messageCount: {{ $messageCount ?? 0 }},
@@ -76,8 +76,11 @@
       }"
       :class="{ 'privacy': $store.discreet?.on }">
 
-    {{-- Top Navigation Bar --}}
-    <nav class="sticky top-0 z-50 border-b border-secondary bg-bg/95 backdrop-blur-sm">
+    {{-- Top Navigation Bar. The whole layout is an app shell: <body> is a fixed-height
+         (h-dvh) flex column that never scrolls, so this bar — a flex-shrink-0 row at the top —
+         is always on screen without `fixed`/`sticky` (both of which the app.css
+         `overflow-x: hidden` on html/body would fight). Only <main> scrolls. --}}
+    <nav class="z-50 h-16 flex-shrink-0 border-b border-secondary bg-bg/95 backdrop-blur-sm">
         <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
             {{-- Left Section --}}
             <div class="flex items-center gap-4">
@@ -92,12 +95,6 @@
                     <h1 class="text-primary text-xl font-display font-bold hidden sm:inline">{{ config('app.name') }}</h1>
                 </div>
 
-                {{-- The suite launcher. Each app in the ecosystem is its own deployment, so
-                     this is the only thing that lets a user move between them — and the only
-                     reason several separate apps read as one product. It renders nothing when
-                     there is nowhere to switch to. --}}
-                <x-frietzakje-app-switcher class="hidden sm:block" />
-
                 @if(isset($badge))
                     {{ $badge }}
                 @endif
@@ -105,6 +102,13 @@
 
             {{-- Right Section --}}
             <div class="flex items-center gap-2">
+                {{-- The suite launcher. Each app in the ecosystem is its own deployment, so
+                     this is the only thing that lets a user move between them — and the only
+                     reason several separate apps read as one product. It renders nothing when
+                     there is nowhere to switch to. Opens right-aligned so the panel stays
+                     on-screen from this edge. --}}
+                <x-frietzakje-app-switcher align="right" class="hidden sm:block" />
+
                 {{-- Search --}}
                 @if(!isset($hideSearch) || !$hideSearch)
                 <button class="hidden sm:grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors">
@@ -241,21 +245,6 @@
                 </div>
                 @endif
 
-                {{-- Messages --}}
-                @if(!isset($hideMessages) || !$hideMessages)
-                <div class="relative hidden md:block">
-                    <button class="grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors">
-                        <x-frietzakje-icon name="mail" class="text-xl" />
-                    </button>
-                    <span
-                        x-show="messageCount > 0"
-                        x-text="messageCount"
-                        x-cloak
-                        class="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-bg"
-                    ></span>
-                </div>
-                @endif
-
                 {{-- Discretion Mode Toggle --}}
                 @if(isset($showDiscreetToggle) && $showDiscreetToggle)
                 <button type="button"
@@ -321,20 +310,98 @@
                         @endif
                     </div>
                 </div>
+                @else
+                    {{-- No explicit user slot was passed, so fall back to the app's auth
+                         state. A signed-in user gets their initials and a menu with sign
+                         out; a guest gets a login icon that goes to the login page. The
+                         links only render if the app actually has those named routes, so
+                         this stays inert in apps that have no auth. --}}
+                    @auth
+                        @php
+                            $__u = auth()->user();
+                            $__name = $__u->name ?? ($__u->username ?? 'Account');
+                            $__initials = collect(explode(' ', trim($__name)))
+                                ->filter()
+                                ->take(2)
+                                ->map(fn ($p) => mb_strtoupper(mb_substr($p, 0, 1)))
+                                ->implode('');
+                            $__initials = $__initials !== '' ? $__initials : mb_strtoupper(mb_substr($__name, 0, 2));
+                        @endphp
+                        <div class="flex items-center gap-2 ml-2 pl-2 border-l border-secondary" x-data="{ userMenuOpen: false }">
+                            <button
+                                @click="userMenuOpen = !userMenuOpen"
+                                class="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-secondary/40 transition-colors"
+                                :aria-expanded="userMenuOpen"
+                                aria-label="{{ __('Account menu') }}"
+                            >
+                                <x-frietzakje-avatar size="sm" :fallback="$__initials" :alt="$__name" />
+                                <span class="text-sm font-medium hidden md:inline">{{ $__name }}</span>
+                                <x-frietzakje-icon name="expand_more" class="text-lg" />
+                            </button>
+
+                            <div
+                                x-show="userMenuOpen"
+                                @click.outside="userMenuOpen = false"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute right-4 top-14 w-56 rounded-lg border border-secondary bg-bg shadow-xl"
+                                x-cloak
+                            >
+                                <div class="p-3 border-b border-secondary">
+                                    <p class="font-semibold truncate">{{ $__name }}</p>
+                                    @if(!empty($__u->email))
+                                        <p class="text-xs text-text/60 truncate">{{ $__u->email }}</p>
+                                    @endif
+                                </div>
+                                @if(Route::has('logout'))
+                                    <div class="py-2">
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-left text-danger hover:bg-secondary/40 transition-colors">
+                                                <x-frietzakje-icon name="logout" class="text-lg" />
+                                                {{ __('Sign out') }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        @if(Route::has('login'))
+                            <a href="{{ route('login') }}"
+                               class="ml-2 grid size-9 place-items-center rounded-md transition-colors hover:bg-secondary/40"
+                               aria-label="{{ __('Sign in') }}"
+                               title="{{ __('Sign in') }}">
+                                <x-frietzakje-icon name="login" class="text-xl" />
+                            </a>
+                        @endif
+                    @endauth
                 @endif
             </div>
         </div>
     </nav>
 
-    {{-- Main Layout --}}
-    <div class="flex min-h-[calc(100vh-4rem)]">
+    {{-- Main Layout row (sidebar + content). `flex-1 min-h-0` fills the space between the
+         navbar and footer; `min-h-0` is what lets <main>'s own scrollbar work inside a flex
+         parent instead of the row growing to fit all the content. --}}
+    <div class="flex flex-1 min-h-0">
         {{-- Sidebar --}}
-        <aside class="fixed inset-y-16 left-0 z-40 w-64 flex-shrink-0 border-r border-secondary bg-bg transition-transform duration-200 lg:static lg:inset-y-0 overflow-y-auto"
+        <aside class="fixed top-16 bottom-0 left-0 z-40 w-64 flex-shrink-0 overflow-y-auto border-r border-secondary bg-bg transition-transform duration-200 lg:static"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
 
-            {{-- Sidebar Navigation --}}
+            {{-- Sidebar Navigation. A page may pass its own `navigation` slot; otherwise the
+                 app's nav data (config('frietzakje-ui.nav'), set per app) is rendered by the
+                 shared component — one layout, identical menu across apps, entries per app. --}}
             <nav class="flex-1 p-4" aria-label="Main navigation">
-                {{ $navigation ?? '' }}
+                @isset($navigation)
+                    {{ $navigation }}
+                @elseif(config('frietzakje-ui.nav'))
+                    <x-frietzakje::sidebar-nav :sections="config('frietzakje-ui.nav')" />
+                @endif
             </nav>
 
             {{-- Sidebar Footer (Optional User Menu) --}}
@@ -368,10 +435,11 @@
              `fluid` additionally drops the padding, for screens that must reach the edges: the
              split-view inbox, the kanban board, the planner grid.
 
-             No `overflow-y-auto` here: it would make <main> the scroll container instead of the
-             window, which silently breaks `position: sticky` for everything inside it (in-page
-             nav, sticky save bars, sticky table headers). --}}
-        <main class="min-w-0 flex-1 overflow-x-hidden">
+             <main> IS the scroll container here (`overflow-y-auto`): in this app shell the window
+             never scrolls — the navbar, sidebar and footer are fixed-size rows of a
+             viewport-height body, and only the content in here moves. Any in-page sticky
+             (save bars, table headers) now sticks relative to <main>, which is what we want. --}}
+        <main class="min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
             @if ($fluid ?? false)
                 <div class="w-full">
                     {{ $slot }}
@@ -384,22 +452,43 @@
         </main>
     </div>
 
-    {{-- Footer --}}
-    @if(isset($showFooter) && $showFooter)
-        <footer class="border-t border-secondary/60 bg-bg flex-shrink-0">
+    {{-- Footer — shown by default (a page can opt out with :showFooter="false"). As the last
+         flex-shrink-0 row of the viewport-height body, it is always on screen at the bottom
+         while the content scrolls above it. Carries copyright, the build identity (version +
+         commit — its one home now, not the navbar), and the legal links. --}}
+    @if($showFooter ?? true)
+        <footer class="flex-shrink-0 border-t border-secondary/60 bg-bg">
             <div class="w-full px-4 py-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col gap-3 text-xs text-text/50 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
                         <span>&copy; {{ now()->year }} {{ config('app.name') }}. Alle rechten voorbehouden.</span>
-                        @if(config('app.version'))
-                            <span class="font-mono text-text/40">v{{ config('app.version') }}</span>
+                        @if(config('app.version') || config('app.commit'))
+                            <span class="font-mono text-text/40">{{ trim('v'.config('app.version').' · '.config('app.commit'), ' ·') }}</span>
                         @endif
                     </div>
-                    {{ $footerLinks ?? '' }}
+
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                        @if(\Illuminate\Support\Facades\Route::has('legal.company'))
+                            <a href="{{ route('legal.company') }}" class="transition-colors hover:text-text">{{ __('Company details') }}</a>
+                        @endif
+                        @if(\Illuminate\Support\Facades\Route::has('legal.terms'))
+                            <a href="{{ route('legal.terms') }}" class="transition-colors hover:text-text">{{ __('Terms of service') }}</a>
+                        @endif
+                        @if(\Illuminate\Support\Facades\Route::has('legal.privacy'))
+                            <a href="{{ route('legal.privacy') }}" class="transition-colors hover:text-text">{{ __('Privacy policy') }}</a>
+                        @endif
+                        @if(\Illuminate\Support\Facades\Route::has('legal.cookies'))
+                            <a href="{{ route('legal.cookies') }}" class="transition-colors hover:text-text">{{ __('Cookie policy') }}</a>
+                        @endif
+                        {{ $footerLinks ?? '' }}
+                    </div>
                 </div>
             </div>
         </footer>
     @endif
+
+    {{-- Cookie consent — asks once, remembers the choice. --}}
+    @include('frietzakje::partials.cookie-banner')
 
     {{-- Alpine Store for Discretion Mode --}}
     <script>

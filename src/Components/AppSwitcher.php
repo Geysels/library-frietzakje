@@ -22,10 +22,14 @@ class AppSwitcher extends Component
 
     public ?string $current;
 
-    public function __construct(?array $apps = null, ?string $current = null)
+    /** Which edge the dropdown opens from — 'left' (default) or 'right'. */
+    public string $align;
+
+    public function __construct(?array $apps = null, ?string $current = null, string $align = 'left')
     {
         $this->apps = $apps ?? config('frietzakje-ui.apps', []);
         $this->current = $current ?? config('frietzakje-ui.app');
+        $this->align = $align === 'right' ? 'right' : 'left';
     }
 
     public function isCurrent(array $app): bool

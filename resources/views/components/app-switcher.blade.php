@@ -11,7 +11,7 @@
         type="button"
         @click="open = ! open"
         :class="{ 'bg-secondary/40': open }"
-        class="flex items-center gap-2 rounded-md px-2 py-1.5 text-text/70 transition-colors hover:bg-secondary/40 hover:text-text"
+        class="flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary/40"
         aria-label="Switch application"
         :aria-expanded="open"
     >
@@ -36,7 +36,11 @@
         x-transition:leave="transition ease-in duration-100"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute left-0 z-50 mt-2 w-80 origin-top-left rounded-lg border border-secondary bg-bg p-2 shadow-2xl"
+        @class([
+            'absolute z-50 mt-2 w-80 rounded-lg border border-secondary bg-bg p-2 shadow-2xl',
+            'left-0 origin-top-left' => $align !== 'right',
+            'right-0 origin-top-right' => $align === 'right',
+        ])
         role="menu"
     >
         <p class="px-2 pb-2 pt-1 text-xs font-semibold uppercase tracking-wider text-text/50">

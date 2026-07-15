@@ -42,6 +42,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Sidebar navigation
+    |--------------------------------------------------------------------------
+    |
+    | One sidebar, rendered by the shared layout from this data — so every app in
+    | the suite looks and behaves identically and an app only supplies the entries.
+    | Override it in the consuming app's own config/frietzakje-ui.php. See the
+    | <x-frietzakje::sidebar-nav> component for the item shape. A page can still
+    | pass its own `navigation` slot to override entirely.
+    |
+    */
+    'nav' => [],
+
+    /*
+    |--------------------------------------------------------------------------
     | Design Tokens
     |--------------------------------------------------------------------------
     |
