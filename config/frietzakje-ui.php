@@ -18,16 +18,19 @@ return [
     */
     'apps' => [
         [
+            // `key` stays 'platform' — it is the internal identifier used by memberships,
+            // SSO and the URL env, so renaming it would mean a data migration. The
+            // user-facing name is 'Backoffice'.
             'key' => 'platform',
-            'name' => 'Platform',
-            'description' => 'Accounts, access and the design system',
+            'name' => 'Backoffice',
+            'description' => 'Accounts, toegang en het ontwerpsysteem',
             'icon' => 'apps',
             'url' => env('FRIETZAKJE_URL_PLATFORM', 'http://localhost:8000'),
         ],
         [
             'key' => 'planning',
             'name' => 'Planning',
-            'description' => 'Shifts, availability and the roster',
+            'description' => 'Shiften, beschikbaarheid en het rooster',
             'icon' => 'calendar_month',
             'url' => env('FRIETZAKJE_URL_PLANNING', 'https://planning.frietzakje.com'),
         ],

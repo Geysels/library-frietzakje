@@ -10,11 +10,14 @@
 
 <div id="page-loader"
      class="fixed inset-0 z-[200] flex items-center justify-center bg-bg transition-opacity duration-300">
-    @if ($logo)
-        <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-16 w-auto animate-pulse">
-    @else
-        <div class="size-10 animate-spin rounded-full border-2 border-secondary border-t-primary"></div>
-    @endif
+    {{-- A spinning ring wraps the mark: the ring turns, the logo sits (and gently
+         pulses) at its centre. Falls back to just the ring when there's no logo. --}}
+    <div class="relative flex size-24 items-center justify-center">
+        <div class="absolute inset-0 animate-spin rounded-full border-[3px] border-secondary/50 border-t-primary"></div>
+        @if ($logo)
+            <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-14 w-auto animate-pulse">
+        @endif
+    </div>
 </div>
 
 <script>

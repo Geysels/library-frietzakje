@@ -78,7 +78,7 @@
                             ])>{{ $app['name'] }}</span>
 
                             @if ($here)
-                                <x-frietzakje-badge variant="primary" size="sm">Current</x-frietzakje-badge>
+                                <x-frietzakje-badge variant="primary" size="sm">Huidig</x-frietzakje-badge>
                             @endif
                         </div>
 
