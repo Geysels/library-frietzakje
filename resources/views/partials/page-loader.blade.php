@@ -9,14 +9,18 @@
 @endphp
 
 <div id="page-loader"
-     class="fixed inset-0 z-[200] flex items-center justify-center bg-bg transition-opacity duration-300">
-    {{-- A spinning ring wraps the mark: the ring turns, the logo sits (and gently
-         pulses) at its centre. Falls back to just the ring when there's no logo. --}}
-    <div class="relative flex size-24 items-center justify-center">
-        <div class="absolute inset-0 animate-spin rounded-full border-[3px] border-secondary/50 border-t-primary"></div>
-        @if ($logo)
-            <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-14 w-auto animate-pulse">
-        @endif
+     class="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-6 bg-bg transition-opacity duration-300">
+    {{-- A vertical splash: logo on top, the wordmark below it, then the spinner and
+         its label at the bottom. --}}
+    @if ($logo)
+        <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-32 w-auto animate-pulse sm:h-40">
+    @endif
+
+    <span class="wordmark text-3xl text-primary sm:text-4xl">{{ config('app.name') }}</span>
+
+    <div class="mt-2 flex items-center gap-3 text-text/60">
+        <x-frietzakje-spinner size="md" variant="primary" />
+        <span class="text-sm">Laden…</span>
     </div>
 </div>
 

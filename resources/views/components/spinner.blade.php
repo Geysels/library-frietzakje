@@ -4,6 +4,8 @@
         'md' => 'w-6 h-6',
         'lg' => 'w-8 h-8',
         'xl' => 'w-12 h-12',
+        '2xl' => 'w-16 h-16',
+        '3xl' => 'w-20 h-20',
     ];
 
     // `current` inherits the surrounding text colour, which is what you want inside a button.

@@ -36,7 +36,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&family=Nunito:wght@300;400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&family=Roboto+Slab:wght@400;500;700&family=Nunito:wght@300;400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&display=block" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -62,7 +62,7 @@
                     @if ($logo)
                         <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-20 w-auto">
                     @endif
-                    <span class="font-display text-xl font-bold text-primary">{{ config('app.name') }}</span>
+                    <span class="wordmark text-xl text-primary">{{ config('app.name') }}</span>
                 </div>
 
                 @if ($heading)
@@ -87,7 +87,7 @@
                     @if ($logo)
                         <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="size-9 rounded-md">
                     @endif
-                    <span class="font-display text-xl font-bold text-primary">{{ config('app.name') }}</span>
+                    <span class="wordmark text-xl text-primary">{{ config('app.name') }}</span>
                 </div>
 
                 @if ($heading)
