@@ -35,7 +35,7 @@
 
     {{ $head ?? '' }}
 </head>
-<body class="flex h-dvh flex-col overflow-hidden bg-bg text-text antialiased"
+<body class="flex min-h-dvh flex-col bg-bg text-text antialiased lg:h-dvh lg:overflow-hidden"
       x-data="{
           sidebarOpen: false,
           messageCount: {{ $messageCount ?? 0 }},
@@ -82,7 +82,7 @@
          (h-dvh) flex column that never scrolls, so this bar — a flex-shrink-0 row at the top —
          is always on screen without `fixed`/`sticky` (both of which the app.css
          `overflow-x: hidden` on html/body would fight). Only <main> scrolls. --}}
-    <nav class="z-50 h-16 flex-shrink-0 border-b border-secondary bg-bg/95 backdrop-blur-sm">
+    <nav class="sticky top-0 z-50 h-16 flex-shrink-0 border-b border-secondary bg-bg/95 backdrop-blur-sm">
         <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
             {{-- Left Section --}}
             <div class="flex items-center gap-4">
@@ -109,14 +109,7 @@
                      reason several separate apps read as one product. It renders nothing when
                      there is nowhere to switch to. Opens right-aligned so the panel stays
                      on-screen from this edge. --}}
-                <x-frietzakje-app-switcher align="right" class="hidden sm:block" />
-
-                {{-- Search --}}
-                @if(!isset($hideSearch) || !$hideSearch)
-                <button class="hidden sm:grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors">
-                    <x-frietzakje-icon name="search" class="text-xl" />
-                </button>
-                @endif
+                <x-frietzakje-app-switcher align="right" />
 
                 {{-- Notifications with Badge & Dropdown --}}
                 @if(!isset($hideNotifications) || !$hideNotifications)
@@ -359,15 +352,23 @@
                                         <p class="text-xs text-text/60 truncate">{{ $__u->email }}</p>
                                     @endif
                                 </div>
-                                @if(Route::has('logout'))
+                                @if(Route::has('profile') || Route::has('logout'))
                                     <div class="py-2">
-                                        <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-left text-danger hover:bg-secondary/40 transition-colors">
-                                                <x-frietzakje-icon name="logout" class="text-lg" />
-                                                {{ __('Sign out') }}
-                                            </button>
-                                        </form>
+                                        @if(Route::has('profile'))
+                                            <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-secondary/40 transition-colors">
+                                                <x-frietzakje-icon name="manage_accounts" class="text-lg" />
+                                                {{ __('Profile') }}
+                                            </a>
+                                        @endif
+                                        @if(Route::has('logout'))
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-left text-danger hover:bg-secondary/40 transition-colors">
+                                                    <x-frietzakje-icon name="logout" class="text-lg" />
+                                                    {{ __('Sign out') }}
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
@@ -390,7 +391,7 @@
     {{-- Main Layout row (sidebar + content). `flex-1 min-h-0` fills the space between the
          navbar and footer; `min-h-0` is what lets <main>'s own scrollbar work inside a flex
          parent instead of the row growing to fit all the content. --}}
-    <div class="flex flex-1 min-h-0">
+    <div class="flex flex-1 lg:min-h-0">
         {{-- Sidebar --}}
         <aside class="fixed top-16 bottom-0 left-0 z-40 w-64 flex-shrink-0 overflow-y-auto border-r border-secondary bg-bg transition-transform duration-200 lg:static"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
@@ -441,7 +442,7 @@
              never scrolls — the navbar, sidebar and footer are fixed-size rows of a
              viewport-height body, and only the content in here moves. Any in-page sticky
              (save bars, table headers) now sticks relative to <main>, which is what we want. --}}
-        <main class="min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
+        <main class="min-w-0 flex-1 overflow-x-hidden lg:overflow-y-auto">
             @if ($fluid ?? false)
                 <div class="w-full">
                     {{ $slot }}
