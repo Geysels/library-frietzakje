@@ -17,11 +17,10 @@
     >
         <x-frietzakje-icon name="grid_view" class="text-xl" />
 
-        {{-- Naming the app you are in is half the point: with several deployments wearing
-             the same shell, "which one am I looking at" stops being obvious. --}}
-        @if ($current)
-            <span class="hidden font-display text-sm font-semibold sm:inline">{{ $current['name'] }}</span>
-        @endif
+        {{-- Naming the app you are in is half the point: with several deployments wearing the
+             same shell, "which one am I looking at" stops being obvious. Always shown (icon +
+             label); falls back to the app name if FRIETZAKJE_APP isn't set to a known app. --}}
+        <span class="font-display text-sm font-semibold">{{ $current['name'] ?? config('app.name') }}</span>
 
         <x-frietzakje-icon name="expand_more" class="text-lg" />
     </button>
