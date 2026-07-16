@@ -2,22 +2,7 @@
 
 return [
 
-    'apps' => [
-        [
-            'key'         => 'platform',
-            'name'        => 'Backoffice',
-            'description' => 'Accounts, toegang en het ontwerpsysteem',
-            'icon'        => 'apps',
-            'url'         => env('FRIETZAKJE_URL_PLATFORM', 'http://localhost:8000'),
-        ],
-        [
-            'key'         => 'planning',
-            'name'        => 'Planning',
-            'description' => 'Shiften, beschikbaarheid en het rooster',
-            'icon'        => 'calendar_month',
-            'url'         => env('FRIETZAKJE_URL_PLANNING', 'https://planning.frietzakje.com'),
-        ],
-    ],
+    'apps' => [],
 
     'app' => env('FRIETZAKJE_APP'),
 
