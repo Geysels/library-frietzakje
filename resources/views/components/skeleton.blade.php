@@ -1,3 +1,8 @@
+@props([
+    'variant' => 'text',
+    'lines' => 3,
+])
+
 @php
     $shimmer = 'animate-pulse bg-secondary/60';
 @endphp
@@ -8,9 +13,9 @@
     <div {{ $attributes->class($shimmer.' h-24 w-full rounded-lg') }}></div>
 @else
     <div {{ $attributes->class('space-y-2') }}>
+        {{-- `@for` has no `$loop`, so the short last line is worked out from the index. --}}
         @for ($i = 0; $i < $lines; $i++)
-            {{-- Last line runs short, the way a real paragraph does. --}}
-            <div class="{{ $shimmer }} h-3 rounded {{ $loop->last && $lines > 1 ? 'w-2/3' : 'w-full' }}"></div>
+            <div class="{{ $shimmer }} h-3 rounded {{ ($i === $lines - 1 && $lines > 1) ? 'w-2/3' : 'w-full' }}"></div>
         @endfor
     </div>
 @endif

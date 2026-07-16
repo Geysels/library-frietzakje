@@ -1,3 +1,9 @@
+@props([
+    'variant' => 'default',
+    'padded' => false,
+    'hoverable' => false,
+])
+
 @php
     // Border colour is a prop, so highlighting a card (current plan, danger zone) doesn't
     // mean fighting the base class with an important override.

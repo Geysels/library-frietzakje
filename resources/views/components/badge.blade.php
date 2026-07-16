@@ -1,3 +1,8 @@
+@props([
+    'variant' => 'neutral',
+    'size' => 'md',
+])
+
 @php
     $base = 'inline-flex items-center gap-1 rounded-md border';
 
