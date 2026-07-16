@@ -7,7 +7,10 @@
         @php
             $ownerOnly = $section['owner'] ?? false;
             $items = collect($section['items'] ?? [])
-                ->reject(fn ($i) => ($i['owner'] ?? false) && ! ($__user?->isOwner()));
+                ->reject(fn ($i) => ($i['owner'] ?? false) && ! ($__user?->isOwner()))
+                // Membership gate: an item may require the user to belong to a suite app.
+                ->reject(fn ($i) => isset($i['app'])
+                    && ! ($__user && method_exists($__user, 'belongsToApp') && $__user->belongsToApp($i['app'])));
         @endphp
 
         @if (! ($ownerOnly && ! $__user?->isOwner()) && $items->isNotEmpty())
