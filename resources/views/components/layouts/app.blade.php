@@ -165,8 +165,8 @@
                         {{-- Header --}}
                         <div class="flex items-center justify-between border-b border-secondary p-4">
                             <div>
-                                <h3 class="font-bold">Notifications</h3>
-                                <p class="text-xs text-text/60" x-text="unreadCount > 0 ? unreadCount + ' unread' : 'All caught up!'"></p>
+                                <h3 class="font-bold">Notificaties</h3>
+                                <p class="text-xs text-text/60" x-text="unreadCount > 0 ? unreadCount + ' ongelezen' : 'Alles gelezen'"></p>
                             </div>
                             <div class="flex gap-2">
                                 <button
@@ -174,14 +174,14 @@
                                     class="text-xs text-primary hover:underline"
                                     x-show="unreadCount > 0"
                                 >
-                                    Mark all read
+                                    Alles gelezen markeren
                                 </button>
                                 <button
                                     @click="clearAll()"
                                     class="text-xs text-danger hover:underline"
                                     x-show="notifications.length > 0"
                                 >
-                                    Clear all
+                                    Alles wissen
                                 </button>
                             </div>
                         </div>
@@ -191,7 +191,7 @@
                             <template x-if="notifications.length === 0">
                                 <div class="p-8 text-center">
                                     <x-frietzakje-icon name="notifications_none" class="text-4xl text-text/40 mx-auto mb-2" />
-                                    <p class="text-sm text-text/60">No notifications</p>
+                                    <p class="text-sm text-text/60">Geen notificaties</p>
                                 </div>
                             </template>
 
@@ -244,7 +244,7 @@
                                             type="button"
                                             @click.stop.prevent="removeNotification(notification.id)"
                                             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                            aria-label="Dismiss notification"
+                                            aria-label="Notificatie verwijderen"
                                         >
                                             <x-frietzakje-icon name="close" class="text-lg text-text/60 hover:text-danger" />
                                         </button>
@@ -253,10 +253,14 @@
                             </template>
                         </div>
 
-                        {{-- Footer --}}
+                        {{-- Footer — only when the app provides a dedicated notifications page
+                             (a route named `notifications`). Without one there is nowhere to send
+                             the user, so we don't render a dead link. --}}
+                        @if(\Illuminate\Support\Facades\Route::has('notifications'))
                         <div class="border-t border-secondary p-3 text-center">
-                            <a href="#" class="text-sm text-primary hover:underline">View all notifications</a>
+                            <a href="{{ route('notifications') }}" class="text-sm text-primary hover:underline">Alle notificaties bekijken</a>
                         </div>
+                        @endif
                     </div>
                 </div>
                 @endif
