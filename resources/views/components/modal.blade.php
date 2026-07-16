@@ -1,10 +1,10 @@
 {{-- Backdrop blurs, panel scales in. Closes on backdrop click, ESC, or the close button.
      Driven either by Alpine events (`name`) or a Livewire boolean (`show`). --}}
 @php
-    // No border or heavy shadow — the dimmed, blurred backdrop already separates the panel, and on
-    // the dark theme a grey outline plus a black shadow just muddies the edge. `max-h`/overflow lets
+    // A shadow (no border) lifts the panel off the dark backdrop — the border was what muddied the
+    // edge earlier; without any elevation the panel melts into the background. `max-h`/overflow lets
     // a tall modal scroll inside itself instead of running off a small screen.
-    $panelClasses = 'w-full '.$maxWidth.' max-h-[90dvh] overflow-y-auto rounded-xl bg-bg p-6';
+    $panelClasses = 'w-full '.$maxWidth.' max-h-[90dvh] overflow-y-auto rounded-xl bg-bg p-6 shadow-2xl';
 @endphp
 
 <div
