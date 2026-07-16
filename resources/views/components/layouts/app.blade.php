@@ -241,12 +241,22 @@
                 </div>
                 @endif
 
-                {{-- Discretion Mode Toggle --}}
-                @if(isset($showDiscreetToggle) && $showDiscreetToggle)
+                {{-- Discretion Mode Toggle. Blurs everything marked `.sensitive` at once — wages and
+                     costs, but also names, addresses, any private detail. Shown to owners, or
+                     wherever a page opts in with :showDiscreetToggle. `method_exists` keeps the
+                     shared layout safe in a suite app whose User has no isOwner(). --}}
+                @php
+                    $__showDiscreet = ($showDiscreetToggle ?? false)
+                        || (auth()->check() && method_exists(auth()->user(), 'isOwner') && auth()->user()->isOwner());
+                @endphp
+                {{-- Desktop: a one-tap icon. On mobile it moves into the account dropdown (below)
+                     to save the scarce navbar space. --}}
+                @if($__showDiscreet)
                 <button type="button"
                         @click="$store.discreet.on = !$store.discreet.on"
-                        class="hidden md:grid size-9 place-items-center rounded-md text-text/70 transition-colors hover:bg-secondary/40 hover:text-primary"
-                        x-bind:aria-label="$store.discreet.on ? 'Show amounts' : 'Hide amounts'">
+                        class="hidden size-9 place-items-center rounded-md text-text/70 transition-colors hover:bg-secondary/40 hover:text-primary sm:grid"
+                        x-bind:aria-label="$store.discreet.on ? 'Gevoelige gegevens tonen' : 'Gevoelige gegevens verbergen'"
+                        x-bind:title="$store.discreet.on ? 'Gevoelige gegevens tonen' : 'Gevoelige gegevens verbergen'">
                     <x-frietzakje-icon name="visibility_off" class="text-xl" x-show="$store.discreet.on" />
                     <x-frietzakje-icon name="visibility" class="text-xl" x-show="!$store.discreet.on" />
                 </button>
@@ -360,6 +370,16 @@
                                                 <x-frietzakje-icon name="manage_accounts" class="text-lg" />
                                                 {{ __('Profile') }}
                                             </a>
+                                        @endif
+                                        {{-- Discretion toggle — mobile home for the navbar icon, which is hidden below sm. --}}
+                                        @if($__showDiscreet)
+                                            <button type="button"
+                                                @click="$store.discreet.on = !$store.discreet.on"
+                                                class="flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-secondary/40 sm:hidden">
+                                                <x-frietzakje-icon name="visibility_off" class="text-lg" x-show="$store.discreet.on" />
+                                                <x-frietzakje-icon name="visibility" class="text-lg" x-show="!$store.discreet.on" x-cloak />
+                                                <span x-text="$store.discreet.on ? 'Gevoelige gegevens tonen' : 'Gevoelige gegevens verbergen'"></span>
+                                            </button>
                                         @endif
                                         @if(Route::has('logout'))
                                             <form method="POST" action="{{ route('logout') }}">
