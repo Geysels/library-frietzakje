@@ -10,7 +10,7 @@
     $initials = $fallback ?? strtoupper(substr($alt, 0, 2));
 @endphp
 
-<div {{ $attributes->class($sizeClass.' rounded-full overflow-hidden flex items-center justify-center bg-secondary text-text font-display font-semibold') }}>
+<div {{ $attributes->class($sizeClass.' shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-secondary text-text font-display font-semibold') }}>
     @if($src)
         <img src="{{ $src }}" alt="{{ $alt }}" class="w-full h-full object-cover">
     @else
