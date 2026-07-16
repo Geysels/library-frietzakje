@@ -11,6 +11,9 @@ class Progress extends Component
         public int $max = 100,
         public string $variant = 'primary',
         public bool $showLabel = false,
+        public bool $inside = false,
+        public bool $animated = false,
+        public string $format = 'percent',
     ) {
     }
 
