@@ -45,7 +45,7 @@
         <div class="fixed inset-0 bg-bg/70"></div>
 
         <div class="relative flex min-h-screen items-center justify-center px-4 py-10 sm:py-16">
-            <div class="w-full max-w-md rounded-2xl border border-white/10 bg-bg/80 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
+            <div class="w-full max-w-md rounded-2xl border border-white/10 bg-bg/80 p-8 shadow-lg backdrop-blur-xl sm:p-10">
                 <div class="mb-8 flex flex-col items-center gap-3 text-center">
                     @if ($logo)
                         <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-20 w-auto">
