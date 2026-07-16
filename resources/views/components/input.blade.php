@@ -16,38 +16,78 @@
         : [];
 @endphp
 
-<div class="grid gap-1">
-    @if ($label)
-        <label for="{{ $id }}" class="text-sm">{{ $label }}</label>
-    @endif
+@if ($floating ?? false)
+    {{-- Floating label: the label starts as the placeholder and rises to the top-left on focus or
+         once the field is filled. A trailing icon still fits; a leading icon isn't used here (the
+         label occupies that space). The label must follow the input for the CSS sibling selector,
+         and placeholder=" " is what lets :placeholder-shown track emptiness. --}}
+    <div class="grid gap-1">
+        <div class="relative">
+            <input
+                id="{{ $id }}"
+                type="{{ $type }}"
+                @if ($name) name="{{ $name }}" @endif
+                placeholder=" "
+                {{ $attributes->merge($hardening)->class(
+                    'fz-float-input w-full rounded-md border bg-bg px-3 pt-5 pb-1.5 text-base transition-colors duration-150'
+                    .' focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                    .($trailingIcon ? ' pr-10' : '').' '.$borderClass
+                ) }}
+            >
 
-    <div class="relative">
-        @if ($icon)
-            <x-frietzakje-icon
-                :name="$icon"
-                class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xl text-text/40"
-            />
+            @if ($label)
+                <label for="{{ $id }}" class="fz-float-label">{{ $label }}</label>
+            @endif
+
+            @if ($trailingIcon)
+                <x-frietzakje-icon
+                    :name="$trailingIcon"
+                    class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xl text-text/40"
+                />
+            @endif
+        </div>
+
+        @if ($help && ! $error)
+            <small class="text-text/60">{{ $help }}</small>
         @endif
-
-        <input
-            id="{{ $id }}"
-            type="{{ $type }}"
-            @if ($name) name="{{ $name }}" @endif
-            {{ $attributes->merge($hardening)->class($base.' '.$paddingClass.' '.$borderClass) }}
-        >
-
-        @if ($trailingIcon)
-            <x-frietzakje-icon
-                :name="$trailingIcon"
-                class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xl text-text/40"
-            />
+        @if ($error)
+            <small class="text-danger">{{ $error }}</small>
         @endif
     </div>
+@else
+    <div class="grid gap-1">
+        @if ($label)
+            <label for="{{ $id }}" class="text-sm">{{ $label }}</label>
+        @endif
 
-    @if ($help && ! $error)
-        <small class="text-text/60">{{ $help }}</small>
-    @endif
-    @if ($error)
-        <small class="text-danger">{{ $error }}</small>
-    @endif
-</div>
+        <div class="relative">
+            @if ($icon)
+                <x-frietzakje-icon
+                    :name="$icon"
+                    class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xl text-text/40"
+                />
+            @endif
+
+            <input
+                id="{{ $id }}"
+                type="{{ $type }}"
+                @if ($name) name="{{ $name }}" @endif
+                {{ $attributes->merge($hardening)->class($base.' '.$paddingClass.' '.$borderClass) }}
+            >
+
+            @if ($trailingIcon)
+                <x-frietzakje-icon
+                    :name="$trailingIcon"
+                    class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xl text-text/40"
+                />
+            @endif
+        </div>
+
+        @if ($help && ! $error)
+            <small class="text-text/60">{{ $help }}</small>
+        @endif
+        @if ($error)
+            <small class="text-danger">{{ $error }}</small>
+        @endif
+    </div>
+@endif
