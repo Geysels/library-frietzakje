@@ -33,12 +33,16 @@
     $barInner = 'fz-progress-bar '.$barClass.' h-full rounded-full transition-all duration-300 ease-out'
         .($animated ? ' fz-progress-animated' : '');
 
-    // The inside label sits over the coloured fill, so white text drowns on a bright bar
-    // (yellow, green). Default to auto-contrast — dark text on the bright variants, light text on
-    // the dark ones (secondary/accent) — matching how the solid buttons pick their text colour.
-    // labelColor="light"|"dark" forces it, or pass any text-* class straight through.
+    // The inside label spans two backgrounds at once: the dark unfilled track and the coloured
+    // fill. A single colour can't read on both. So by default (labelColor="auto") over a BRIGHT
+    // fill we draw the label twice — a light copy for the track and a dark copy clipped to exactly
+    // the filled width — and let the colour split ride the fill edge per character. Dark-fill
+    // variants (secondary/accent) are dark on both sides, so there we just use light text.
+    // labelColor="light"|"dark" forces a single colour, or pass any text-* class straight through.
+    $brightFill = ! in_array($variant, ['secondary', 'accent']);
+    $twoTone = $labelColor === 'auto' && $brightFill;
     $labelTextClass = match ($labelColor) {
-        'auto'  => in_array($variant, ['secondary', 'accent']) ? 'text-white' : 'text-bg',
+        'auto'  => 'text-white',
         'light' => 'text-white',
         'dark'  => 'text-bg',
         default => $labelColor,
@@ -72,7 +76,15 @@
                 aria-valuemin="0"
                 aria-valuemax="{{ $max }}"
             ></div>
-            <span class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-semibold {{ $labelTextClass }}">{{ $labelText }}</span>
+            @if ($twoTone)
+                {{-- Light copy for the dark track underneath… --}}
+                <span class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">{{ $labelText }}</span>
+                {{-- …and a dark copy clipped to exactly the filled width, so the colour split rides
+                     the fill edge. The clip reads --fz-progress, so it tracks live/animated fills too. --}}
+                <span class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-semibold text-bg" style="clip-path: inset(0 calc(100% - var(--fz-progress)) 0 0)">{{ $labelText }}</span>
+            @else
+                <span class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-semibold {{ $labelTextClass }}">{{ $labelText }}</span>
+            @endif
         </div>
     @else
         <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
