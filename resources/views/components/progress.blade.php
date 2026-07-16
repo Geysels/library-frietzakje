@@ -17,12 +17,32 @@
     $barClass = $variants[$variant] ?? $variants['primary'];
 
     // The auto label is a percentage by default, or an X/Y fraction with format="fraction".
-    // A non-empty slot overrides it with whatever the caller wrote ("77/150 taken klaar").
+    // A non-empty slot overrides it: the caller writes a template and we fill in the live numbers,
+    // so "{value}/{max} taken klaar" becomes "77/150 taken klaar" and "{percent}% klaar" → "51%
+    // klaar". Plain text with no placeholders is left untouched.
     $autoLabel = $format === 'fraction' ? $value.'/'.$max : number_format($percentage, 0).'%';
-    $labelText = $slot->isNotEmpty() ? $slot : $autoLabel;
+    $slotText = $slot->isNotEmpty()
+        ? strtr(trim($slot->toHtml()), [
+            '{value}'   => $value,
+            '{max}'     => $max,
+            '{percent}' => number_format($percentage, 0),
+        ])
+        : '';
+    $labelText = $slotText !== '' ? $slotText : $autoLabel;
 
     $barInner = 'fz-progress-bar '.$barClass.' h-full rounded-full transition-all duration-300 ease-out'
         .($animated ? ' fz-progress-animated' : '');
+
+    // The inside label sits over the coloured fill, so white text drowns on a bright bar
+    // (yellow, green). Default to auto-contrast — dark text on the bright variants, light text on
+    // the dark ones (secondary/accent) — matching how the solid buttons pick their text colour.
+    // labelColor="light"|"dark" forces it, or pass any text-* class straight through.
+    $labelTextClass = match ($labelColor) {
+        'auto'  => in_array($variant, ['secondary', 'accent']) ? 'text-white' : 'text-bg',
+        'light' => 'text-white',
+        'dark'  => 'text-bg',
+        default => $labelColor,
+    };
 @endphp
 
 {{-- The width rides on a CSS custom property rather than an inline `width:`, so a caller can
@@ -35,7 +55,7 @@
 <div {{ $attributes->merge(['style' => "--fz-progress: {$percentage}%"])->class('space-y-1') }}>
     @if ($showLabel && ! $inside)
         <div class="flex justify-between text-sm text-text/70">
-            <span>{{ $slot }}</span>
+            <span>{{ $slotText }}</span>
             <span>{{ $autoLabel }}</span>
         </div>
     @endif
@@ -52,7 +72,7 @@
                 aria-valuemin="0"
                 aria-valuemax="{{ $max }}"
             ></div>
-            <span class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-semibold text-text">{{ $labelText }}</span>
+            <span class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-semibold {{ $labelTextClass }}">{{ $labelText }}</span>
         </div>
     @else
         <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">

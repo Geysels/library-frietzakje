@@ -14,6 +14,7 @@ class Progress extends Component
         public bool $inside = false,
         public bool $animated = false,
         public string $format = 'percent',
+        public string $labelColor = 'auto',
     ) {
     }
 
