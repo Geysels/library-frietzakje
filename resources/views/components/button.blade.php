@@ -1,7 +1,7 @@
 @php
     // `fz-ripple` marks the button for the click-ripple in app.js (it also sets
     // position/overflow so the ink is clipped to the rounded shape).
-    $base = 'fz-ripple inline-flex items-center justify-center gap-2 rounded-md font-display tracking-tight'
+    $base = 'fz-ripple inline-flex items-center justify-center gap-2 rounded-md font-display font-bold tracking-tight'
         .' transition-[filter,color,background-color,border-color] duration-150'
         .' focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-bg'
         .' disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:filter-none';
@@ -16,15 +16,15 @@
     //    (accent, secondary) are faint by design — use solid there instead.
     $variants = [
         // Solid variants — foreground chosen for contrast, not uniformity.
-        'primary' => 'bg-primary text-bg font-bold hover:brightness-90 focus-visible:ring-primary',
-        'success' => 'bg-success text-bg font-bold hover:brightness-90 focus-visible:ring-success',
-        'danger' => 'bg-danger text-bg font-bold hover:brightness-90 focus-visible:ring-danger',
-        'message' => 'bg-message text-bg font-bold hover:brightness-90 focus-visible:ring-message',
-        'warning' => 'bg-warning text-bg font-bold hover:brightness-90 focus-visible:ring-warning',
-        'accent-2' => 'bg-accent-2 text-bg font-bold hover:brightness-90 focus-visible:ring-accent-2',
-        'secondary' => 'bg-secondary text-text font-bold hover:brightness-90 focus-visible:ring-secondary',
-        'neutral' => 'bg-secondary text-text font-bold hover:brightness-90 focus-visible:ring-secondary',
-        'accent' => 'bg-accent text-text font-bold hover:brightness-90 focus-visible:ring-accent',
+        'primary' => 'bg-primary text-bg hover:brightness-90 focus-visible:ring-primary',
+        'success' => 'bg-success text-bg hover:brightness-90 focus-visible:ring-success',
+        'danger' => 'bg-danger text-bg hover:brightness-90 focus-visible:ring-danger',
+        'message' => 'bg-message text-bg hover:brightness-90 focus-visible:ring-message',
+        'warning' => 'bg-warning text-bg hover:brightness-90 focus-visible:ring-warning',
+        'accent-2' => 'bg-accent-2 text-bg hover:brightness-90 focus-visible:ring-accent-2',
+        'secondary' => 'bg-secondary text-text hover:brightness-90 focus-visible:ring-secondary',
+        'neutral' => 'bg-secondary text-text hover:brightness-90 focus-visible:ring-secondary',
+        'accent' => 'bg-accent text-text hover:brightness-90 focus-visible:ring-accent',
 
         // Outline variants — matching colour throughout, uniform hover fill.
         'primary-outline' => 'border-2 border-primary text-primary hover:bg-primary/15 focus-visible:ring-primary',
