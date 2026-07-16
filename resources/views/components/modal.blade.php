@@ -1,7 +1,9 @@
 {{-- Backdrop blurs, panel scales in. Closes on backdrop click, ESC, or the close button.
      Driven either by Alpine events (`name`) or a Livewire boolean (`show`). --}}
 @php
-    $panelClasses = 'w-full '.$maxWidth.' rounded-lg border border-secondary bg-bg p-6 shadow-2xl';
+    // No border or heavy shadow — the dimmed, blurred backdrop already separates the panel, and on
+    // the dark theme a grey outline plus a black shadow just muddies the edge.
+    $panelClasses = 'w-full '.$maxWidth.' rounded-xl bg-bg p-6';
 @endphp
 
 <div
