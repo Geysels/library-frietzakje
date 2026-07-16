@@ -1,0 +1,336 @@
+@theme {
+    --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-display: 'Montserrat', 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Roboto', 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    --font-brand: 'Roboto Slab', 'Roboto', ui-serif, Georgia, serif;
+
+    --shadow-panel: 0 2px 10px rgb(0 0 0 / 0.35);
+
+    --text-small: 0.875rem;
+    --text-base: 1.125rem;
+    --text-h4: 1.25rem;
+    --text-h3: 1.375rem;
+    --text-h2: 1.625rem;
+    --text-h1: 2rem;
+
+    --color-bg: #1b1b1e;
+    --color-text: #efefef;
+    --color-primary: #fedb00;
+    --color-secondary: #303030;
+    --color-accent: #3901c5;
+    --color-accent-2: #3f9ffc;
+    --color-success: #2ac427;
+    --color-warning: #ff9500;
+    --color-danger: #ff4444;
+    --color-message: #02a4c8;
+}
+
+html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    overflow-x: hidden;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+* {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+h1 { font-family: var(--font-display); font-size: var(--text-h1); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-family: var(--font-display); font-size: var(--text-h2); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+h3 { font-family: var(--font-display); font-size: var(--text-h3); font-weight: 700; line-height: 1.2; }
+h4 { font-family: var(--font-display); font-size: var(--text-h4); font-weight: 600; line-height: 1.25; }
+small { font-size: var(--text-small); }
+
+[x-cloak] { display: none !important; }
+
+*:focus-visible {
+    outline: none;
+}
+
+a, button {
+    transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease, filter 150ms ease;
+}
+
+.fz-ripple {
+    position: relative;
+    overflow: hidden;
+}
+.fz-ripple-ink {
+    position: absolute;
+    border-radius: 9999px;
+    transform: scale(0);
+    background: currentColor;
+    opacity: 0.3;
+    pointer-events: none;
+    animation: fz-ripple 600ms ease-out forwards;
+}
+@keyframes fz-ripple {
+    to { transform: scale(2.4); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fz-ripple-ink { display: none; }
+}
+
+.wordmark {
+    font-family: var(--font-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+}
+
+.fz-float-label {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    line-height: 1;
+    color: color-mix(in srgb, var(--color-text) 45%, transparent);
+    pointer-events: none;
+    transition: top 150ms ease, font-size 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.fz-float-input:focus ~ .fz-float-label,
+.fz-float-input:not(:placeholder-shown) ~ .fz-float-label {
+    top: 0.5rem;
+    transform: translateY(0);
+    font-size: 0.72rem;
+}
+.fz-float-input:focus ~ .fz-float-label {
+    color: var(--color-primary);
+}
+
+.stat-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: var(--text-small);
+    color: var(--color-primary);
+}
+
+.privacy .sensitive {
+    filter: blur(6px);
+    user-select: none;
+    transition: filter 150ms ease;
+}
+.sensitive {
+    transition: filter 150ms ease;
+}
+
+.fz-table-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-text) 30%, transparent) color-mix(in srgb, var(--color-secondary) 40%, transparent);
+}
+.fz-table-scroll::-webkit-scrollbar {
+    display: block;
+    height: 0.5rem;
+}
+.fz-table-scroll::-webkit-scrollbar-track {
+    background: color-mix(in srgb, var(--color-secondary) 40%, transparent);
+    border-radius: 9999px;
+}
+.fz-table-scroll::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-text) 30%, transparent);
+    border-radius: 9999px;
+}
+.fz-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-text) 45%, transparent);
+}
+
+.fz-table thead {
+    background-color: var(--color-secondary);
+}
+.fz-table th {
+    padding: 0.75rem 1rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--color-secondary);
+}
+.fz-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-secondary) 50%, transparent);
+}
+.fz-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.fz-table.striped tbody tr:nth-child(even) {
+    background-color: color-mix(in srgb, var(--color-secondary) 30%, transparent);
+}
+.fz-table.hoverable tbody tr:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+.flatpickr-input {
+    box-shadow: none !important;
+}
+
+.flatpickr-input:focus {
+    outline: none !important;
+}
+
+.flatpickr-calendar {
+    background: #252528;
+    border: 2px solid var(--color-primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    font-family: var(--font-body);
+}
+
+.flatpickr-months {
+    background: var(--color-primary);
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.flatpickr-month {
+    color: var(--color-bg);
+    fill: var(--color-bg);
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    background: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: 700;
+}
+
+.flatpickr-current-month .numInputWrapper span {
+    border-color: transparent;
+}
+
+.flatpickr-current-month .numInputWrapper span:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.flatpickr-weekdays {
+    background: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.flatpickr-weekday {
+    color: var(--color-bg);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.flatpickr-day {
+    color: var(--color-text);
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day.prevMonthDay:hover,
+.flatpickr-day.nextMonthDay:hover {
+    background: var(--color-secondary);
+    border-color: var(--color-primary);
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: #666;
+}
+
+.flatpickr-day.today {
+    border-color: var(--color-primary);
+    border-width: 2px;
+    font-weight: 600;
+}
+
+.flatpickr-day.today:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: 700;
+}
+
+.flatpickr-day.disabled {
+    color: #444;
+    opacity: 0.4;
+}
+
+.flatpickr-time {
+    border-top: 1px solid var(--color-secondary);
+}
+
+.flatpickr-calendar.noCalendar .flatpickr-time {
+    border-top: none;
+    border-radius: 0.5rem;
+}
+
+.flatpickr-time input {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.flatpickr-time input:hover,
+.flatpickr-time input:focus {
+    background: var(--color-secondary);
+}
+
+.flatpickr-time .flatpickr-time-separator,
+.flatpickr-time .flatpickr-am-pm {
+    color: var(--color-text);
+}
+
+.flatpickr-time .numInputWrapper span.arrowUp:after {
+    border-bottom-color: var(--color-text);
+}
+
+.flatpickr-time .numInputWrapper span.arrowDown:after {
+    border-top-color: var(--color-text);
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill: var(--color-primary);
+}
+
+.fz-progress-bar {
+    width: var(--fz-progress, 0%);
+}
+
+.fz-progress-animated {
+    background-image: linear-gradient(
+        45deg,
+        rgb(255 255 255 / 0.18) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgb(255 255 255 / 0.18) 50%,
+        rgb(255 255 255 / 0.18) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 1rem 1rem;
+    animation: fz-progress-stripes 1s linear infinite;
+}
+
+@keyframes fz-progress-stripes {
+    from { background-position: 1rem 0; }
+    to { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fz-progress-animated { animation: none; }
+}
