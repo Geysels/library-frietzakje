@@ -38,6 +38,7 @@ class UiServiceProvider extends ServiceProvider
             Components\BarChart::class,
             Components\Breadcrumbs::class,
             Components\Button::class,
+            Components\ButtonGroup::class,
             Components\Card::class,
             Components\Checkbox::class,
             Components\Container::class,
