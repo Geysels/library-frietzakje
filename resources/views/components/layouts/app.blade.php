@@ -86,8 +86,9 @@
         <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
             {{-- Left Section --}}
             <div class="flex items-center gap-4">
-                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors">
-                    <x-frietzakje-icon name="menu" class="text-2xl" />
+                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors" :aria-expanded="sidebarOpen" aria-label="Menu">
+                    <x-frietzakje-icon name="menu" class="text-2xl" x-show="!sidebarOpen" />
+                    <x-frietzakje-icon name="close" class="text-2xl" x-show="sidebarOpen" x-cloak />
                 </button>
 
                 <div class="flex items-center gap-2.5">
@@ -393,7 +394,10 @@
          parent instead of the row growing to fit all the content. --}}
     <div class="flex flex-1 lg:min-h-0">
         {{-- Sidebar --}}
-        <aside class="fixed top-16 bottom-0 left-0 z-40 w-64 flex-shrink-0 overflow-y-auto border-r border-secondary bg-bg transition-transform duration-200 lg:static"
+        {{-- Mobile: a full-width drawer below the navbar (easier to read and tap than a narrow
+             strip); the navbar's menu button stays above it to close. Desktop: the fixed w-64
+             column in normal flow. --}}
+        <aside class="fixed top-16 bottom-0 left-0 z-40 w-full flex-shrink-0 overflow-y-auto border-r border-secondary bg-bg transition-transform duration-200 lg:static lg:w-64"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
 
             {{-- Sidebar Navigation. A page may pass its own `navigation` slot; otherwise the
