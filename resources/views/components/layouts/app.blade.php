@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1b1b1e">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name') }}</title>
 
     {{-- Favicons + web app manifest (realfavicongenerator.net set, served from public root). --}}
@@ -49,7 +50,7 @@
                Each notification: { id, type, icon, title, message, time, url?, read? }
                `type` is any palette variant; `url` makes the row a link to the thing it is
                telling you about. --}}
-          notifications: @js(collect($notifications ?? [])->map(fn ($n) => $n + ['read' => $n['read'] ?? false])->values()),
+          notifications: @js(collect($notifications ?? ($platformNotifications ?? []))->map(fn ($n) => $n + ['read' => $n['read'] ?? false])->values()),
 
           {{-- The badge reads this getter, so the count is derived from the list and cannot
                drift out of step with it. The old code also kept a separate `notificationCount`
@@ -62,16 +63,36 @@
           markAsRead(id) {
               const notif = this.notifications.find(n => n.id === id);
               if (notif) notif.read = true;
+              this.persist('POST', '/notifications/' + id + '/read', id);
           },
           markAllAsRead() {
               this.notifications.forEach(n => n.read = true);
+              this.persist('POST', '/notifications/read-all');
           },
           removeNotification(id) {
               this.notifications = this.notifications.filter(n => n.id !== id);
+              this.persist('DELETE', '/notifications/' + id, id);
           },
           clearAll() {
               this.notifications = [];
               this.notificationPanelOpen = false;
+              this.persist('DELETE', '/notifications');
+          },
+
+          {{-- Persist a bell action to a same-origin endpoint. The UI already updated optimistically,
+               so this is fire-and-forget: a suite app that hasn't wired these paths just no-ops.
+               Only server-backed rows (numeric DB id) are sent — client-only notifications from the
+               `notify` event have string ids and stay local. --}}
+          persist(method, path, id = null) {
+              if (id !== null && ! /^\d+$/.test(String(id))) return;
+              fetch(path, {
+                  method,
+                  headers: {
+                      'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '',
+                      'X-Requested-With': 'XMLHttpRequest',
+                      'Accept': 'application/json',
+                  },
+              }).catch(() => {});
           },
 
           {{-- Add a notification from the client — no server round-trip. Dispatch a `notify`
