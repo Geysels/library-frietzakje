@@ -7,7 +7,22 @@
     ];
 
     $sizeClass = $sizes[$size] ?? $sizes['md'];
-    $initials = $fallback ?? strtoupper(substr($alt, 0, 2));
+
+    // Initials from the name: first letter of the first word + first letter of the last word
+    // ("Nick Geysels" → "NG"). A single word falls back to its first two letters. An explicit
+    // `fallback` always wins. ($fallback is optional and may be unset — hence the ?? null.)
+    $fb = $fallback ?? null;
+    if ($fb !== null && $fb !== '') {
+        $initials = $fb;
+    } else {
+        $parts = preg_split('/\s+/', trim((string) ($alt ?? '')), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $initials = match (true) {
+            count($parts) >= 2 => mb_substr($parts[0], 0, 1).mb_substr(end($parts), 0, 1),
+            count($parts) === 1 => mb_substr($parts[0], 0, 2),
+            default => '',
+        };
+        $initials = mb_strtoupper($initials);
+    }
 @endphp
 
 <div {{ $attributes->class($sizeClass.' shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-secondary text-text font-display font-semibold') }}>
