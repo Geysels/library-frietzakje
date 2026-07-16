@@ -138,7 +138,7 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="opacity-100 scale-100"
                         x-transition:leave-end="opacity-0 scale-95"
-                        class="absolute right-0 top-12 w-96 rounded-lg border border-secondary bg-bg shadow-2xl"
+                        class="fixed inset-x-2 top-[4.25rem] w-auto rounded-lg border border-secondary bg-bg shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-96"
                         x-cloak
                     >
                         {{-- Header --}}
