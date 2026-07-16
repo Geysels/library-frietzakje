@@ -35,9 +35,6 @@
             this.message = detail.message || 'Notification';
             this.currentVariant = detail.variant || '{{ $variant }}';
             this.show = true;
-
-            // Restart the countdown on every toast. Without this, a toast fired while a
-            // previous one is still up inherits the older timer and vanishes early.
             clearTimeout(this.timer);
             this.timer = setTimeout(() => this.show = false, detail.duration || 3000);
         }

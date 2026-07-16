@@ -10,18 +10,10 @@
         toggle() {
             this.checked = ! this.checked;
             this.$refs.input.checked = this.checked;
-
-            // `bubbles: true` matters: without it the event dies on the hidden input and a
-            // form-level @change listener — the usual way to track a dirty form — never sees
-            // the toggle flip.
             this.$refs.input.dispatchEvent(new Event('change', { bubbles: true }));
         },
     }"
-    x-init="
-        // A native form.reset() rewinds the hidden input but knows nothing about the knob,
-        // so re-read the input afterwards or the two drift apart.
-        $el.closest('form')?.addEventListener('reset', () => queueMicrotask(() => checked = $refs.input.checked));
-    "
+    x-init="$el.closest('form')?.addEventListener('reset', () => queueMicrotask(() => checked = $refs.input.checked));"
 >
     <button
         type="button"
