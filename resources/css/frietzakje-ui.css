@@ -1,11 +1,35 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/forms';
+/* =============================================================================
+   Frietzakje UI — shared design system
+   -----------------------------------------------------------------------------
+   The tokens (@theme) and the custom classes the components rely on (.fz-ripple,
+   .fz-progress-*, .wordmark, .sensitive/.privacy, the themed table, floating labels,
+   flatpickr theming, …). Every suite app imports this ONE file so the design system
+   is defined in a single place and can't drift between apps.
+
+   In your app's resources/css/app.css, after "@import 'tailwindcss';", add:
+
+       @import '../../vendor/frietzakje/ui/resources/css/frietzakje-ui.css';
+
+   then @source lines pointing at this package's views (vendor/frietzakje/ui/resources/views)
+   and your own app's views, so Tailwind generates the components' classes. See the app's
+   app.css for the exact lines — they are kept there, not here, so a glob's star-slash can't
+   close this comment early.
+
+   This file does NOT @import tailwindcss or flatpickr, and declares no @source —
+   those stay in the app so paths resolve correctly for each app.
+   ============================================================================= */
 
 @theme {
     /* Fonts (load via <link> in your app layout). */
     --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-display: 'Montserrat', 'Nunito', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Roboto', 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    --font-brand: 'Roboto Slab', 'Roboto', ui-serif, Georgia, serif;
+
+    /* One shadow for every floating panel (modal, dropdowns, app switcher, slide-over). Kept
+       deliberately SMALL — the big shadow-2xl banded into "stacked borders" on the dark theme.
+       Change it here and every panel follows (or drop it for border-only). */
+    --shadow-panel: 0 2px 10px rgb(0 0 0 / 0.35);
 
     /* Type scale (in rem, assuming 16px root). */
     --text-small: 0.875rem;     /* 14 */
@@ -32,6 +56,7 @@
 html {
     background-color: var(--color-bg);
     color: var(--color-text);
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 body {
@@ -40,6 +65,17 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Hide scrollbars but keep scroll functionality */
+* {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+*::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
 }
 
 h1 { font-family: var(--font-display); font-size: var(--text-h1); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
@@ -58,7 +94,66 @@ small { font-size: var(--text-small); }
 
 /* Smooth color/bg transitions everywhere as a low-effort polish. */
 a, button {
-    transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+    transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease, filter 150ms ease;
+}
+
+/* Ripple — a click animation on buttons. The button carries `.fz-ripple`, which
+   clips the ink to its rounded shape; app.js drops a `.fz-ripple-ink` span at the
+   pointer, which grows and fades. `currentColor` makes the ink match each variant's
+   text, so it reads on both solid and outline buttons. */
+.fz-ripple {
+    position: relative;
+    overflow: hidden;
+}
+.fz-ripple-ink {
+    position: absolute;
+    border-radius: 9999px;
+    transform: scale(0);
+    background: currentColor;
+    opacity: 0.3;
+    pointer-events: none;
+    animation: fz-ripple 600ms ease-out forwards;
+}
+@keyframes fz-ripple {
+    to { transform: scale(2.4); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fz-ripple-ink { display: none; }
+}
+
+/* Brand wordmark — the logo set as text: Roboto Slab, uppercase, a little tracking.
+   Use `.wordmark` wherever the logo name appears as a mark (login, navbar brand).
+   Not for inline/running text like the footer copyright. */
+.wordmark {
+    font-family: var(--font-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+}
+
+/* Floating label input — the label sits inside the field like a placeholder, then rises to the
+   top-left when the field is focused or filled (Bootstrap/Material style). Needs the input to
+   carry placeholder=" " (so :placeholder-shown tracks emptiness) and the label to follow it in
+   the DOM. */
+.fz-float-label {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    line-height: 1;
+    color: color-mix(in srgb, var(--color-text) 45%, transparent);
+    pointer-events: none;
+    transition: top 150ms ease, font-size 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.fz-float-input:focus ~ .fz-float-label,
+.fz-float-input:not(:placeholder-shown) ~ .fz-float-label {
+    top: 0.5rem;
+    transform: translateY(0);
+    font-size: 0.72rem;
+}
+.fz-float-input:focus ~ .fz-float-label {
+    color: var(--color-primary);
 }
 
 /* Number-style emphasised stat label */
@@ -69,6 +164,43 @@ a, button {
     text-transform: uppercase;
     font-size: var(--text-small);
     color: var(--color-primary);
+}
+
+/* Discretion mode — a single body-level toggle blurs every sensitive figure
+   (wages, loonkosten, cost charts) at once. Driven by the Alpine `discreet`
+   store via the `.privacy` class on <body>; individual values just carry
+   `.sensitive`. Robust CSS cascade — no per-element JS bindings to get stuck. */
+.privacy .sensitive {
+    filter: blur(6px);
+    user-select: none;
+    transition: filter 150ms ease;
+}
+.sensitive {
+    transition: filter 150ms ease;
+}
+
+/* A table can be wider than the screen — most noticeable on a phone. Scrollbars are
+   hidden globally (above), so re-enable a themed one on the table's scroll container:
+   it's the only cue that there is more table to the right. Appears only when the table
+   actually overflows. */
+.fz-table-scroll {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: color-mix(in srgb, var(--color-text) 30%, transparent) color-mix(in srgb, var(--color-secondary) 40%, transparent);
+}
+.fz-table-scroll::-webkit-scrollbar {
+    display: block; /* override the global hide */
+    height: 0.5rem;
+}
+.fz-table-scroll::-webkit-scrollbar-track {
+    background: color-mix(in srgb, var(--color-secondary) 40%, transparent);
+    border-radius: 9999px;
+}
+.fz-table-scroll::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-text) 30%, transparent);
+    border-radius: 9999px;
+}
+.fz-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-text) 45%, transparent);
 }
 
 /* Table — scoped to the `.fz-table` class the table component sets, so these rules
@@ -99,40 +231,166 @@ a, button {
     background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
 }
 
-/* Custom checkbox and radio styling with our colors */
-input[type='checkbox'],
-input[type='radio'] {
-    color: var(--color-primary);
-    border-color: var(--color-secondary);
-    background-color: var(--color-bg);
+/* Flatpickr custom styling to match the Frietzakje design system. Harmless if flatpickr isn't
+   loaded — the rules only apply once the plugin renders its markup (the base flatpickr CSS is
+   imported by apps that actually use the date-time-picker). */
+.flatpickr-input {
+    box-shadow: none !important;
 }
 
-input[type='checkbox']:checked,
-input[type='radio']:checked {
-    background-color: var(--color-primary);
+.flatpickr-input:focus {
+    outline: none !important;
+}
+
+.flatpickr-calendar {
+    background: #252528;
+    border: 2px solid var(--color-primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    font-family: var(--font-body);
+}
+
+.flatpickr-months {
+    background: var(--color-primary);
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.flatpickr-month {
+    color: var(--color-bg);
+    fill: var(--color-bg);
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    background: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: 700;
+}
+
+.flatpickr-current-month .numInputWrapper span {
+    border-color: transparent;
+}
+
+.flatpickr-current-month .numInputWrapper span:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.flatpickr-weekdays {
+    background: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.flatpickr-weekday {
+    color: var(--color-bg);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.flatpickr-day {
+    color: var(--color-text);
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day.prevMonthDay:hover,
+.flatpickr-day.nextMonthDay:hover {
+    background: var(--color-secondary);
     border-color: var(--color-primary);
 }
 
-input[type='checkbox']:focus,
-input[type='radio']:focus {
-    ring-color: var(--color-primary);
-    border-color: var(--color-primary);
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: #666;
 }
 
-/* Discretion mode — a single body-level toggle blurs every sensitive figure
-   (wages, loonkosten, cost charts) at once. Driven by the Alpine `discreet`
-   store via the `.privacy` class on <body>; individual values just carry
-   `.sensitive`. Robust CSS cascade — no per-element JS bindings to get stuck. */
-.privacy .sensitive {
-    filter: blur(6px);
-    user-select: none;
-    transition: filter 150ms ease;
+.flatpickr-day.today {
+    border-color: var(--color-primary);
+    border-width: 2px;
+    font-weight: 600;
 }
-.sensitive {
-    transition: filter 150ms ease;
+
+.flatpickr-day.today:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: 700;
+}
+
+.flatpickr-day.disabled {
+    color: #444;
+    opacity: 0.4;
+}
+
+.flatpickr-time {
+    border-top: 1px solid var(--color-secondary);
+}
+
+.flatpickr-calendar.noCalendar .flatpickr-time {
+    border-top: none;
+    border-radius: 0.5rem;
+}
+
+.flatpickr-time input {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.flatpickr-time input:hover,
+.flatpickr-time input:focus {
+    background: var(--color-secondary);
+}
+
+.flatpickr-time .flatpickr-time-separator,
+.flatpickr-time .flatpickr-am-pm {
+    color: var(--color-text);
+}
+
+.flatpickr-time .numInputWrapper span.arrowUp:after {
+    border-bottom-color: var(--color-text);
+}
+
+.flatpickr-time .numInputWrapper span.arrowDown:after {
+    border-top-color: var(--color-text);
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill: var(--color-primary);
 }
 
 /* Progress bar width is driven by a custom property so callers can bind it from Alpine. */
 .fz-progress-bar {
     width: var(--fz-progress, 0%);
+}
+
+/* A moving barber-pole overlay for an in-progress / working feel. The stripes are a translucent
+   white gradient layered over the variant's background colour, so any bar colour keeps its hue. */
+.fz-progress-animated {
+    background-image: linear-gradient(
+        45deg,
+        rgb(255 255 255 / 0.18) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgb(255 255 255 / 0.18) 50%,
+        rgb(255 255 255 / 0.18) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 1rem 1rem;
+    animation: fz-progress-stripes 1s linear infinite;
+}
+
+@keyframes fz-progress-stripes {
+    from { background-position: 1rem 0; }
+    to { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fz-progress-animated { animation: none; }
 }
