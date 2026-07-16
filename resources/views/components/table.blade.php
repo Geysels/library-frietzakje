@@ -6,7 +6,7 @@
     if ($hoverable) $classes .= ' hoverable';
 @endphp
 
-<div class="overflow-x-auto rounded-lg border border-secondary">
+<div class="fz-table-scroll overflow-x-auto rounded-lg border border-secondary">
     <table {{ $attributes->class($classes) }}>
         {{ $slot }}
     </table>
