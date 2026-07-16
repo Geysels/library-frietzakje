@@ -1,10 +1,4 @@
-{{-- Backdrop blurs, panel scales in. Closes on backdrop click, ESC, or the close button.
-     Driven either by Alpine events (`name`) or a Livewire boolean (`show`). --}}
 @php
-    // No border (it muddied the edge); the shared soft `shadow-panel` lifts the panel off the dark
-    // backdrop without the banding shadow-2xl showed. The OUTER div is the scroll container, so the
-    // panel needs no height cap of its own — a modal taller than the screen grows the scroll area
-    // and stays reachable, instead of being clipped at the bottom.
     $panelClasses = 'w-full '.$maxWidth.' rounded-xl bg-bg p-6 shadow-panel';
 @endphp
 
@@ -17,16 +11,12 @@
     @else
         x-data="{ open: false }"
         x-show="open"
-        {{-- Lock the page behind the modal so a phone scrolls the modal, not the page under it.
-             Toggling on <html> is the reliable way to freeze the document scroll. --}}
         x-effect="document.documentElement.classList.toggle('overflow-hidden', open)"
         x-on:open-modal.window="if ($event.detail === '{{ $name }}') open = true"
         x-on:close-modal.window="if (! $event.detail || $event.detail === '{{ $name }}') open = false"
         x-on:keydown.escape.window="open = false"
     @endif
     x-cloak
-    {{-- Backdrop AND scroll container: scrolling happens here, so a modal taller than the screen is
-         fully reachable and never cut off by the viewport or the footer below the page. --}}
     class="fixed inset-0 z-50 overflow-y-auto bg-bg/80 p-4 backdrop-blur-sm"
     x-transition:enter="transition ease-out duration-150"
     x-transition:enter-start="opacity-0"
@@ -37,7 +27,6 @@
     role="dialog"
     aria-modal="true"
 >
-    {{-- Grows with the panel: centres a short modal, and lets a tall one scroll from the top. --}}
     <div class="flex min-h-full items-center justify-center">
         <div
             @if ($usesLivewire())

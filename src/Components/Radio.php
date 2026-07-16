@@ -10,8 +10,7 @@ class Radio extends Component
         public ?string $label = null,
         public ?string $name = null,
         public ?string $value = null,
-    ) {
-    }
+    ) {}
 
     public function render()
     {

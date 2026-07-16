@@ -12,8 +12,7 @@ class Pagination extends Component
         public int $total = 0,
         public string $baseUrl = '#',
         public string $label = 'results',
-    ) {
-    }
+    ) {}
 
     public function lastPage(): int
     {
@@ -31,9 +30,6 @@ class Pagination extends Component
     }
 
     /**
-     * Page numbers to render, with `null` marking an elided run. Keeps the control at a
-     * fixed width no matter how many pages exist.
-     *
      * @return array<int, int|null>
      */
     public function pages(): array

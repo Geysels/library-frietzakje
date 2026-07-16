@@ -6,21 +6,21 @@
 @endphp
 
 <div class="grid gap-1">
-    @if($label)
+    @if ($label)
         <label for="{{ $id }}" class="text-sm">{{ $label }}</label>
     @endif
 
     <textarea
         id="{{ $id }}"
-        @if($name) name="{{ $name }}" @endif
+        @if ($name) name="{{ $name }}" @endif
         rows="{{ $rows }}"
         {{ $attributes->class($base.' '.$borderClass) }}
     >{{ $slot }}</textarea>
 
-    @if($help && !$error)
+    @if ($help && ! $error)
         <small class="text-text/60">{{ $help }}</small>
     @endif
-    @if($error)
+    @if ($error)
         <small class="text-danger">{{ $error }}</small>
     @endif
 </div>

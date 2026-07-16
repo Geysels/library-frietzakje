@@ -1,10 +1,9 @@
 @php
-    // x-anchor pins the teleported bubble to the trigger for each side (centred on that edge).
     $anchors = [
-        'top' => 'x-anchor.top.offset.8',
+        'top'    => 'x-anchor.top.offset.8',
         'bottom' => 'x-anchor.bottom.offset.8',
-        'left' => 'x-anchor.left.offset.8',
-        'right' => 'x-anchor.right.offset.8',
+        'left'   => 'x-anchor.left.offset.8',
+        'right'  => 'x-anchor.right.offset.8',
     ];
     $anchor = $anchors[$position] ?? $anchors['top'];
 @endphp
@@ -19,9 +18,6 @@
 >
     <span x-ref="trigger" class="inline-flex">{{ $slot }}</span>
 
-    {{-- Teleported to <body>, so no ancestor's overflow can clip it — a card clipped to its radius,
-         a scrolling panel, a table with overflow-x-auto. `x-anchor` keeps it pinned to the trigger
-         (and repositions on scroll/resize), so it still points at the right spot. --}}
     <template x-teleport="body">
         <span
             x-show="show"

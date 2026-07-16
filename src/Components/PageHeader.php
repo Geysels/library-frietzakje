@@ -13,8 +13,7 @@ class PageHeader extends Component
         public string $title,
         public ?string $description = null,
         public array $breadcrumbs = [],
-    ) {
-    }
+    ) {}
 
     public function render()
     {

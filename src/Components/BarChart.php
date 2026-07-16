@@ -7,9 +7,6 @@ use Illuminate\View\Component;
 class BarChart extends Component
 {
     /**
-     * A dependency-free bar chart: CSS heights against the series maximum, no canvas,
-     * no chart library. Good for the "how did this week go" panel every dashboard has.
-     *
      * @param  array<int, array{label: string, value: int|float, variant?: string}>  $series
      */
     public function __construct(

@@ -2,11 +2,6 @@
     $id = $attributes->get('id') ?? ($name ? 'checkbox-'.$name : null);
 @endphp
 
-{{-- A themed checkbox. The native box can't be styled on a dark theme, so `appearance-none`
-     strips it and we draw our own: a rounded square that fills with the primary colour and shows
-     a checkmark when ticked. Input and checkmark share one grid cell (place-items-center), so the
-     mark is dead-centre at any size; the checkmark is a sibling of the input so `peer-checked`
-     can reveal it. Any attribute (checked, value, x-model, wire:model, disabled) passes through. --}}
 <div class="flex items-start gap-2.5">
     <span class="mt-0.5 grid shrink-0 place-items-center">
         <input

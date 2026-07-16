@@ -1,6 +1,4 @@
 @php
-    // `fz-table` scopes the styles in the stylesheet to this component. Without it the
-    // rules leak onto every <table> on the page.
     $classes = 'fz-table w-full text-left border-collapse';
     if ($striped) $classes .= ' striped';
     if ($hoverable) $classes .= ' hoverable';

@@ -15,8 +15,7 @@ class Progress extends Component
         public bool $animated = false,
         public string $format = 'percent',
         public string $labelColor = 'auto',
-    ) {
-    }
+    ) {}
 
     public function render()
     {

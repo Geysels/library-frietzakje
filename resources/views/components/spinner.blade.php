@@ -1,26 +1,24 @@
 @php
     $sizes = [
-        'sm' => 'w-4 h-4',
-        'md' => 'w-6 h-6',
-        'lg' => 'w-8 h-8',
-        'xl' => 'w-12 h-12',
+        'sm'  => 'w-4 h-4',
+        'md'  => 'w-6 h-6',
+        'lg'  => 'w-8 h-8',
+        'xl'  => 'w-12 h-12',
         '2xl' => 'w-16 h-16',
         '3xl' => 'w-20 h-20',
     ];
 
-    // `current` inherits the surrounding text colour, which is what you want inside a button.
-    // The named variants are for a spinner standing on its own.
     $variants = [
-        'current' => 'text-current',
-        'neutral' => 'text-text/60',
-        'primary' => 'text-primary',
+        'current'   => 'text-current',
+        'neutral'   => 'text-text/60',
+        'primary'   => 'text-primary',
         'secondary' => 'text-text/80',
-        'success' => 'text-success',
-        'warning' => 'text-warning',
-        'danger' => 'text-danger',
-        'message' => 'text-message',
-        'accent' => 'text-accent-2',
-        'accent-2' => 'text-accent-2',
+        'success'   => 'text-success',
+        'warning'   => 'text-warning',
+        'danger'    => 'text-danger',
+        'message'   => 'text-message',
+        'accent'    => 'text-accent-2',
+        'accent-2'  => 'text-accent-2',
     ];
 
     $sizeClass = $sizes[$size] ?? $sizes['md'];

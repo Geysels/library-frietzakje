@@ -1,11 +1,3 @@
-{{-- Chrome-free layout for sign-in, sign-up and password reset: no nav, no sidebar.
-
-     Two modes:
-       • Default — a two-column split, form on the left, optional `$aside` brand
-         panel on the right.
-       • Background — pass `background` (a path under public/) to get a full-bleed
-         photo with a single centered, slightly translucent card. The `$aside`
-         slot is ignored in this mode. --}}
 @props([
     'title' => null,
     'heading' => null,
@@ -16,7 +8,6 @@
 @php
     $hasBackground = $background && file_exists(public_path($background));
 
-    // First logo asset that actually exists, in preference order.
     $logo = collect(['images/logo.png', 'logo.svg', 'logo.png'])
         ->first(fn ($p) => file_exists(public_path($p)));
 @endphp
@@ -48,10 +39,7 @@
     @include('frietzakje::partials.page-loader')
 
 @if ($hasBackground)
-    {{-- Full-bleed background photo with a centered card. --}}
     <div class="relative min-h-screen">
-        {{-- The photo, and a dark scrim over it so the card and text stay legible
-             regardless of how busy the image is. --}}
         <div class="fixed inset-0 bg-cover bg-center"
              style="background-image: url('{{ asset($background) }}');"></div>
         <div class="fixed inset-0 bg-bg/70"></div>
@@ -78,9 +66,7 @@
         </div>
     </div>
 @else
-    {{-- Default two-column split. --}}
     <div class="grid min-h-screen lg:grid-cols-2">
-        {{-- Form column --}}
         <div class="flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-16">
             <div class="mx-auto w-full max-w-sm">
                 <div class="mb-8 flex items-center gap-2.5">
@@ -102,7 +88,6 @@
             </div>
         </div>
 
-        {{-- Brand column: decorative, so it is the first thing to go on small screens. --}}
         <div class="relative hidden overflow-hidden border-l border-secondary bg-secondary/20 lg:block">
             @isset($aside)
                 {{ $aside }}
@@ -111,15 +96,12 @@
     </div>
 @endif
 
-    {{-- Build identity, barely-there in the corner — so any deployed login screen
-         is still identifiable by version + commit without drawing the eye. --}}
     @if (config('app.version') || config('app.commit'))
         <div class="pointer-events-none fixed bottom-2 right-3 z-50 font-mono text-[10px] leading-none text-white/20">
             {{ trim('v'.config('app.version').' · '.config('app.commit'), ' ·') }}
         </div>
     @endif
 
-    {{-- Cookie consent — asks once, remembers the choice. --}}
     @include('frietzakje::partials.cookie-banner')
 
     <x-frietzakje-toast position="top-right" />

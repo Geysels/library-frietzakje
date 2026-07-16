@@ -12,7 +12,6 @@ class Button extends Component
         public ?string $href = null,
         public string $type = 'button',
         public ?string $icon = null,
-        // Strip the ripple, hover and transition — a completely static button.
         public bool $noAnimation = false,
     ) {
     }

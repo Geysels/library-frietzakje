@@ -1,27 +1,26 @@
 @php
     $positionClasses = [
-        'top-right' => 'top-4 right-4',
-        'top-left' => 'top-4 left-4',
-        'top-center' => 'top-4 left-1/2 -translate-x-1/2',
-        'bottom-right' => 'bottom-4 right-4',
-        'bottom-left' => 'bottom-4 left-4',
+        'top-right'     => 'top-4 right-4',
+        'top-left'      => 'top-4 left-4',
+        'top-center'    => 'top-4 left-1/2 -translate-x-1/2',
+        'bottom-right'  => 'bottom-4 right-4',
+        'bottom-left'   => 'bottom-4 left-4',
         'bottom-center' => 'bottom-4 left-1/2 -translate-x-1/2',
     ];
 
     $variantClasses = [
-        'neutral' => 'bg-secondary text-text',
-        'primary' => 'bg-primary text-bg',
+        'neutral'   => 'bg-secondary text-text',
+        'primary'   => 'bg-primary text-bg',
         'secondary' => 'bg-secondary text-text',
-        'success' => 'bg-success text-bg',
-        'warning' => 'bg-warning text-bg',
-        'danger' => 'bg-danger text-bg',
-        'message' => 'bg-message text-bg',
-        'accent' => 'bg-accent text-text',
-        'accent-2' => 'bg-accent-2 text-text',
+        'success'   => 'bg-success text-bg',
+        'warning'   => 'bg-warning text-bg',
+        'danger'    => 'bg-danger text-bg',
+        'message'   => 'bg-message text-bg',
+        'accent'    => 'bg-accent text-text',
+        'accent-2'  => 'bg-accent-2 text-text',
     ];
 
     $posClass = $positionClasses[$position] ?? $positionClasses['top-right'];
-    $varClass = $variantClasses[$variant] ?? $variantClasses['primary'];
 @endphp
 
 <div
@@ -30,8 +29,6 @@
         message: '',
         timer: null,
         currentVariant: '{{ $variant }}',
-        {{-- This map is what actually colours the toast at runtime: it is keyed by the variant
-             carried on the dispatched event, so it has to stay in step with the PHP map above. --}}
         variantClasses: @js($variantClasses),
         fire(detail) {
             detail = typeof detail === 'string' ? { message: detail } : (detail || {});

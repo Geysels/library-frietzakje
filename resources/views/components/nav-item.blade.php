@@ -8,18 +8,18 @@
 
 <li>
     <a href="{{ $href }}"
-       @if(function_exists('wire')) wire:navigate @endif
+       @if (function_exists('wire')) wire:navigate @endif
        @click="sidebarOpen = false"
        {{ $attributes->class([
            'flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-150',
-           $classes
+           $classes,
        ]) }}
        aria-current="{{ $active ? 'page' : 'false' }}">
-        @if($icon)
+        @if ($icon)
             <x-frietzakje-icon :name="$icon" class="text-xl" />
         @endif
         <span class="text-sm font-medium flex-1">{{ $slot }}</span>
-        @if($badge)
+        @if ($badge)
             <x-frietzakje-badge variant="neutral" class="ml-auto">{{ $badge }}</x-frietzakje-badge>
         @endif
     </a>

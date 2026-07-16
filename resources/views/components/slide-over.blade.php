@@ -1,6 +1,3 @@
-{{-- A right-hand drawer for detail panels and filter forms — the thing you reach for when
-     a modal would be too small and a new page too much. Open with
-     $dispatch('open-slide-over', 'employee-detail'). --}}
 <div
     x-data="{ open: false }"
     x-show="open"

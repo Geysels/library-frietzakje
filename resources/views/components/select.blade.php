@@ -6,25 +6,25 @@
 @endphp
 
 <div class="grid gap-1">
-    @if($label)
+    @if ($label)
         <label for="{{ $id }}" class="text-sm">{{ $label }}</label>
     @endif
 
     <select
         id="{{ $id }}"
-        @if($name) name="{{ $name }}" @endif
+        @if ($name) name="{{ $name }}" @endif
         {{ $attributes->class($base.' '.$borderClass) }}
     >
         {{ $slot }}
-        @foreach($options as $value => $label)
+        @foreach ($options as $value => $label)
             <option value="{{ $value }}">{{ $label }}</option>
         @endforeach
     </select>
 
-    @if($help && !$error)
+    @if ($help && ! $error)
         <small class="text-text/60">{{ $help }}</small>
     @endif
-    @if($error)
+    @if ($error)
         <small class="text-danger">{{ $error }}</small>
     @endif
 </div>

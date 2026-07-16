@@ -1,6 +1,4 @@
 @php
-    // Anchor the menu to the trigger: left-aligned grows from the trigger's bottom-start,
-    // right-aligned from bottom-end. Small offset so it sits just under the trigger.
     $anchor = 'x-anchor.'.($align === 'left' ? 'bottom-start' : 'bottom-end').'.offset.6';
 @endphp
 
@@ -13,9 +11,6 @@
         {{ $trigger }}
     </div>
 
-    {{-- Teleported to <body>, so no ancestor's overflow can clip it — a scrolling <main>, a
-         table with overflow-x-auto, a card clipped to its radius. `x-anchor` keeps it pinned
-         to the trigger (and repositions on scroll/resize), so it still opens in the right place. --}}
     <template x-teleport="body">
         <div
             x-show="open"

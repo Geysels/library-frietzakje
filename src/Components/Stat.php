@@ -19,10 +19,6 @@ class Stat extends Component
     ) {
     }
 
-    /**
-     * Trend colour follows the direction, not the variant: a rising number is not
-     * automatically good news, so callers pass the direction they mean.
-     */
     public function trendVariant(): string
     {
         return match ($this->trendDirection) {

@@ -19,9 +19,6 @@ class Sparkline extends Component
     }
 
     /**
-     * Map the series onto the viewBox. A flat series has no range to normalise against,
-     * so it is pinned to the middle instead of dividing by zero.
-     *
      * @return array<int, array{0: float, 1: float}>
      */
     public function points(): array

@@ -8,9 +8,6 @@
 
     $sizeClass = $sizes[$size] ?? $sizes['md'];
 
-    // Initials from the name: first letter of the first word + first letter of the last word
-    // ("Nick Geysels" → "NG"). A single word falls back to its first two letters. An explicit
-    // `fallback` always wins. ($fallback is optional and may be unset — hence the ?? null.)
     $fb = $fallback ?? null;
     if ($fb !== null && $fb !== '') {
         $initials = $fb;

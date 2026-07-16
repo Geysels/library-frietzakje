@@ -1,9 +1,3 @@
-{{-- Minimal cookie-consent banner.
-
-     The app currently sets only a functional session cookie, for which consent is not
-     legally required — so this is a scaffold: it asks anyway and remembers the answer in
-     localStorage, giving any future analytics/marketing cookie a gate to sit behind. Both
-     buttons simply dismiss for now; wire real cookie categories to the choice later. --}}
 <div
     x-data="{ show: false }"
     x-init="show = ! localStorage.getItem('cookie-consent')"

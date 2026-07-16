@@ -1,23 +1,3 @@
-{{-- Renders the sidebar from a data structure so every app in the suite gets an identical
-     menu — apps supply the entries, the library owns the rendering.
-
-     $sections: array of sections, each:
-       [
-         'title'  => 'Beheer',          // optional section heading
-         'owner'  => true,              // optional — section shown to owners only
-         'items'  => [
-           [
-             'label'    => 'Gebruikers',
-             'icon'     => 'group',      // Material Symbols name (optional)
-             'route'    => 'admin.users' // OR 'url' => '/path'
-             'params'   => [],           // optional route params
-             'active'   => 'admin/*',    // optional request()->is() pattern
-             'owner'    => true,         // optional — item shown to owners only
-             'external' => true,         // optional — opens in a new tab
-           ],
-         ],
-       ]
---}}
 @props(['sections' => []])
 
 @php $__user = auth()->user(); @endphp

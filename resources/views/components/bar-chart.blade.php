@@ -1,16 +1,14 @@
 @php
     $bars = [
-        // Bars are categories, and categories are not states — so the default is neutral and a
-        // coloured bar has to earn it by meaning something.
-        'neutral' => 'bg-text/25',
-        'primary' => 'bg-primary',
+        'neutral'   => 'bg-text/25',
+        'primary'   => 'bg-primary',
         'secondary' => 'bg-secondary',
-        'success' => 'bg-success',
-        'warning' => 'bg-warning',
-        'danger' => 'bg-danger',
-        'message' => 'bg-message',
-        'accent' => 'bg-accent',
-        'accent-2' => 'bg-accent-2',
+        'success'   => 'bg-success',
+        'warning'   => 'bg-warning',
+        'danger'    => 'bg-danger',
+        'message'   => 'bg-message',
+        'accent'    => 'bg-accent',
+        'accent-2'  => 'bg-accent-2',
     ];
 @endphp
 
@@ -22,8 +20,6 @@
             @endphp
 
             <div class="group flex h-full flex-1 flex-col justify-end gap-2">
-                {{-- Value sits above the bar and only appears on hover, so the chart stays
-                     readable at a glance but stays inspectable. --}}
                 <span @class([
                     'text-center font-display text-xs font-semibold text-text opacity-0 transition-opacity duration-150 group-hover:opacity-100',
                     'sensitive' => $sensitive,

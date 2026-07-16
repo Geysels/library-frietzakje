@@ -12,8 +12,7 @@ class Select extends Component
         public ?string $error = null,
         public ?string $name = null,
         public array $options = [],
-    ) {
-    }
+    ) {}
 
     public function render()
     {

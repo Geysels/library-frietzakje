@@ -1,17 +1,6 @@
 # Frietzakje UI
 
-A shared component library for the Frietzakje ecosystem. Built with Laravel, Blade, Tailwind CSS v4, and Alpine.js.
-
-## Components
-
-- **Button** - Versatile button with variants (primary, secondary, ghost, success, danger, danger-solid) and sizes
-- **Card** - Container with glass morphism effect, hoverable and padded options
-- **Input** - Form input with label, help text, and error states
-- **Badge** - Status indicators with multiple variants
-- **Modal** - Alpine.js powered modal with transitions
-- **Icon** - Material Symbols icon wrapper
-- **Empty State** - Placeholder for empty data states
-- **Discreet** - Privacy wrapper for sensitive information
+A shared Blade component library and design system for the Frietzakje suite of applications. Built for Laravel with Tailwind CSS v4 and Alpine.js, it ships a dark-first palette, layouts, and a set of ready-to-use UI components so every app in the suite looks and behaves the same.
 
 ## Installation
 
@@ -19,71 +8,49 @@ A shared component library for the Frietzakje ecosystem. Built with Laravel, Bla
 composer require frietzakje/ui
 ```
 
-The package will auto-register via Laravel's package discovery.
+The service provider is auto-registered via Laravel package discovery.
+
+## Styling
+
+The package's stylesheet defines the design tokens (`@theme`) and the custom classes the components rely on. Import it in your app's `resources/css/app.css`, after `@import 'tailwindcss';`, and add an `@source` so Tailwind scans the package views and generates the classes the components use:
+
+```css
+@import 'tailwindcss';
+@import '../../vendor/frietzakje/ui/resources/css/frietzakje-ui.css';
+
+@source '../../vendor/frietzakje/ui/resources/views';
+```
+
+Load the fonts (Nunito, Roboto, Roboto Slab, Montserrat) and Material Symbols in your layout, or use the provided `<x-frietzakje::layouts.app>` layout which already includes them.
 
 ## Usage
 
-All components are available under the `frietzakje::` namespace:
+Components are registered under the `frietzakje` prefix:
 
 ```blade
-<x-frietzakje::button variant="primary" size="md">
-    Click me
-</x-frietzakje::button>
-
-<x-frietzakje::card :hoverable="true" :padded="true">
-    <h3>Card Title</h3>
-    <p>Card content here</p>
-</x-frietzakje::card>
-
-<x-frietzakje::input
-    name="email"
-    label="Email Address"
-    help="We'll never share your email"
-/>
-
-<x-frietzakje::badge variant="success">Active</x-frietzakje::badge>
+<x-frietzakje-button variant="primary">Opslaan</x-frietzakje-button>
 ```
 
-## Publishing Assets
+## Publishing
 
-Publish CSS assets (optional):
+Publish the CSS assets, views, or config when you need to customise them:
 
 ```bash
 php artisan vendor:publish --tag=frietzakje-ui-assets
-```
-
-Publish views for customization (optional):
-
-```bash
 php artisan vendor:publish --tag=frietzakje-ui-views
-```
-
-Publish configuration (optional):
-
-```bash
 php artisan vendor:publish --tag=frietzakje-ui-config
 ```
 
-## Design System
+## Documentation
 
-The library uses a dark-first design system with:
-
-- **Primary**: #fedb00 (Frietzakje yellow)
-- **Success**: #2ac427
-- **Danger**: #cb0202
-- **Message**: #02a4c8
-
-Fonts:
-- Display: Montserrat
-- Body: Roboto
-- Sans: Nunito
+The full component catalogue — every component, its props, and live examples — is documented in the consuming application (the Backoffice app exposes it at `/components`).
 
 ## Requirements
 
 - PHP 8.3+
-- Laravel 13.0+
-- Tailwind CSS 4.0+
-- Alpine.js (for Modal component)
+- Laravel 13+
+- Tailwind CSS 4+
+- Alpine.js
 
 ## License
 

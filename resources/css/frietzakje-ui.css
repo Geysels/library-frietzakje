@@ -1,45 +1,18 @@
-/* =============================================================================
-   Frietzakje UI — shared design system
-   -----------------------------------------------------------------------------
-   The tokens (@theme) and the custom classes the components rely on (.fz-ripple,
-   .fz-progress-*, .wordmark, .sensitive/.privacy, the themed table, floating labels,
-   flatpickr theming, …). Every suite app imports this ONE file so the design system
-   is defined in a single place and can't drift between apps.
-
-   In your app's resources/css/app.css, after "@import 'tailwindcss';", add:
-
-       @import '../../vendor/frietzakje/ui/resources/css/frietzakje-ui.css';
-
-   then @source lines pointing at this package's views (vendor/frietzakje/ui/resources/views)
-   and your own app's views, so Tailwind generates the components' classes. See the app's
-   app.css for the exact lines — they are kept there, not here, so a glob's star-slash can't
-   close this comment early.
-
-   This file does NOT @import tailwindcss or flatpickr, and declares no @source —
-   those stay in the app so paths resolve correctly for each app.
-   ============================================================================= */
-
 @theme {
-    /* Fonts (load via <link> in your app layout). */
     --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-display: 'Montserrat', 'Nunito', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Roboto', 'Nunito', ui-sans-serif, system-ui, sans-serif;
     --font-brand: 'Roboto Slab', 'Roboto', ui-serif, Georgia, serif;
 
-    /* One shadow for every floating panel (modal, dropdowns, app switcher, slide-over). Kept
-       deliberately SMALL — the big shadow-2xl banded into "stacked borders" on the dark theme.
-       Change it here and every panel follows (or drop it for border-only). */
     --shadow-panel: 0 2px 10px rgb(0 0 0 / 0.35);
 
-    /* Type scale (in rem, assuming 16px root). */
-    --text-small: 0.875rem;     /* 14 */
-    --text-base: 1.125rem;      /* 18 — body */
-    --text-h4: 1.25rem;         /* 20 */
-    --text-h3: 1.375rem;        /* 22 */
-    --text-h2: 1.625rem;        /* 26 */
-    --text-h1: 2rem;            /* 32 */
+    --text-small: 0.875rem;
+    --text-base: 1.125rem;
+    --text-h4: 1.25rem;
+    --text-h3: 1.375rem;
+    --text-h2: 1.625rem;
+    --text-h1: 2rem;
 
-    /* Brand palette — dark mode is the default; light mode is not in v1. */
     --color-bg: #1b1b1e;
     --color-text: #efefef;
     --color-primary: #fedb00;
@@ -52,11 +25,10 @@
     --color-message: #02a4c8;
 }
 
-/* App-wide defaults: dark surface, light text, body type, smooth fonts. */
 html {
     background-color: var(--color-bg);
     color: var(--color-text);
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
 }
 
 body {
@@ -65,17 +37,16 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
 }
 
-/* Hide scrollbars but keep scroll functionality */
 * {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 *::-webkit-scrollbar {
-    display: none; /* Chrome/Safari/Opera */
+    display: none;
 }
 
 h1 { font-family: var(--font-display); font-size: var(--text-h1); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
@@ -84,23 +55,16 @@ h3 { font-family: var(--font-display); font-size: var(--text-h3); font-weight: 7
 h4 { font-family: var(--font-display); font-size: var(--text-h4); font-weight: 600; line-height: 1.25; }
 small { font-size: var(--text-small); }
 
-/* Alpine cloak — hide x-show'd elements before Alpine boots. */
 [x-cloak] { display: none !important; }
 
-/* Subtle visible focus ring for keyboard users. */
 *:focus-visible {
     outline: none;
 }
 
-/* Smooth color/bg transitions everywhere as a low-effort polish. */
 a, button {
     transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease, filter 150ms ease;
 }
 
-/* Ripple — a click animation on buttons. The button carries `.fz-ripple`, which
-   clips the ink to its rounded shape; app.js drops a `.fz-ripple-ink` span at the
-   pointer, which grows and fades. `currentColor` makes the ink match each variant's
-   text, so it reads on both solid and outline buttons. */
 .fz-ripple {
     position: relative;
     overflow: hidden;
@@ -121,9 +85,6 @@ a, button {
     .fz-ripple-ink { display: none; }
 }
 
-/* Brand wordmark — the logo set as text: Roboto Slab, uppercase, a little tracking.
-   Use `.wordmark` wherever the logo name appears as a mark (login, navbar brand).
-   Not for inline/running text like the footer copyright. */
 .wordmark {
     font-family: var(--font-brand);
     text-transform: uppercase;
@@ -131,10 +92,6 @@ a, button {
     font-weight: 700;
 }
 
-/* Floating label input — the label sits inside the field like a placeholder, then rises to the
-   top-left when the field is focused or filled (Bootstrap/Material style). Needs the input to
-   carry placeholder=" " (so :placeholder-shown tracks emptiness) and the label to follow it in
-   the DOM. */
 .fz-float-label {
     position: absolute;
     left: 0.75rem;
@@ -156,7 +113,6 @@ a, button {
     color: var(--color-primary);
 }
 
-/* Number-style emphasised stat label */
 .stat-label {
     font-family: var(--font-display);
     font-weight: 700;
@@ -166,10 +122,6 @@ a, button {
     color: var(--color-primary);
 }
 
-/* Discretion mode — a single body-level toggle blurs every sensitive figure
-   (wages, loonkosten, cost charts) at once. Driven by the Alpine `discreet`
-   store via the `.privacy` class on <body>; individual values just carry
-   `.sensitive`. Robust CSS cascade — no per-element JS bindings to get stuck. */
 .privacy .sensitive {
     filter: blur(6px);
     user-select: none;
@@ -179,16 +131,12 @@ a, button {
     transition: filter 150ms ease;
 }
 
-/* A table can be wider than the screen — most noticeable on a phone. Scrollbars are
-   hidden globally (above), so re-enable a themed one on the table's scroll container:
-   it's the only cue that there is more table to the right. Appears only when the table
-   actually overflows. */
 .fz-table-scroll {
-    scrollbar-width: thin; /* Firefox */
+    scrollbar-width: thin;
     scrollbar-color: color-mix(in srgb, var(--color-text) 30%, transparent) color-mix(in srgb, var(--color-secondary) 40%, transparent);
 }
 .fz-table-scroll::-webkit-scrollbar {
-    display: block; /* override the global hide */
+    display: block;
     height: 0.5rem;
 }
 .fz-table-scroll::-webkit-scrollbar-track {
@@ -203,8 +151,6 @@ a, button {
     background: color-mix(in srgb, var(--color-text) 45%, transparent);
 }
 
-/* Table — scoped to the `.fz-table` class the table component sets, so these rules
-   never touch a plain <table> elsewhere on the page. */
 .fz-table thead {
     background-color: var(--color-secondary);
 }
@@ -231,9 +177,6 @@ a, button {
     background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
 }
 
-/* Flatpickr custom styling to match the Frietzakje design system. Harmless if flatpickr isn't
-   loaded — the rules only apply once the plugin renders its markup (the base flatpickr CSS is
-   imported by apps that actually use the date-time-picker). */
 .flatpickr-input {
     box-shadow: none !important;
 }
@@ -364,13 +307,10 @@ a, button {
     fill: var(--color-primary);
 }
 
-/* Progress bar width is driven by a custom property so callers can bind it from Alpine. */
 .fz-progress-bar {
     width: var(--fz-progress, 0%);
 }
 
-/* A moving barber-pole overlay for an in-progress / working feel. The stripes are a translucent
-   white gradient layered over the variant's background colour, so any bar colour keeps its hue. */
 .fz-progress-animated {
     background-image: linear-gradient(
         45deg,

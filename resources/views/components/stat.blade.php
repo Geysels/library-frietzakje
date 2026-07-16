@@ -1,14 +1,14 @@
 @php
     $iconColors = [
-        'neutral' => 'text-text/60',
-        'primary' => 'text-primary',
+        'neutral'   => 'text-text/60',
+        'primary'   => 'text-primary',
         'secondary' => 'text-text/80',
-        'success' => 'text-success',
-        'warning' => 'text-warning',
-        'danger' => 'text-danger',
-        'message' => 'text-message',
-        'accent' => 'text-accent-2',
-        'accent-2' => 'text-accent-2',
+        'success'   => 'text-success',
+        'warning'   => 'text-warning',
+        'danger'    => 'text-danger',
+        'message'   => 'text-message',
+        'accent'    => 'text-accent-2',
+        'accent-2'  => 'text-accent-2',
     ];
 
     $iconColor = $iconColors[$variant] ?? $iconColors['neutral'];

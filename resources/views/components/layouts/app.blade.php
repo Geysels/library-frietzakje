@@ -7,7 +7,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name') }}</title>
 
-    {{-- Favicons + web app manifest (realfavicongenerator.net set, served from public root). --}}
     <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
@@ -22,7 +21,6 @@
         <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
     @endif
 
-    {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&family=Roboto+Slab:wght@400;500;700&family=Nunito:wght@300;400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -42,21 +40,8 @@
           messageCount: {{ $messageCount ?? 0 }},
           notificationPanelOpen: false,
 
-          {{-- The list is a prop, not a hardcoded fixture. It used to ship three invented
-               notifications ('Deployment successful', 'High memory usage') baked into the
-               layout, which meant no application could ever put a real one there — so pages
-               grew their own alert banners instead and said everything twice.
-
-               Each notification: { id, type, icon, title, message, time, url?, read? }
-               `type` is any palette variant; `url` makes the row a link to the thing it is
-               telling you about. --}}
           notifications: @js(collect($notifications ?? ($platformNotifications ?? []))->map(fn ($n) => $n + ['read' => $n['read'] ?? false])->values()),
 
-          {{-- The badge reads this getter, so the count is derived from the list and cannot
-               drift out of step with it. The old code also kept a separate `notificationCount`
-               and hand-assigned it in four places — a second source of truth for the same
-               number, which is exactly how a bell ends up claiming 3 unread over an empty
-               panel. --}}
           get unreadCount() {
               return this.notifications.filter(n => !n.read).length;
           },
@@ -79,10 +64,6 @@
               this.persist('DELETE', '/notifications');
           },
 
-          {{-- Persist a bell action to a same-origin endpoint. The UI already updated optimistically,
-               so this is fire-and-forget: a suite app that hasn't wired these paths just no-ops.
-               Only server-backed rows (numeric DB id) are sent — client-only notifications from the
-               `notify` event have string ids and stay local. --}}
           persist(method, path, id = null) {
               if (id !== null && ! /^\d+$/.test(String(id))) return;
               fetch(path, {
@@ -95,10 +76,6 @@
               }).catch(() => {});
           },
 
-          {{-- Add a notification from the client — no server round-trip. Dispatch a `notify`
-               window event with { type, icon, title, message, time, url?, open? }; it prepends to
-               the list (newest first) and the unread badge follows. `open: true` also pops the
-               panel. Mirrors how `toast` works, and is what the docs "test" button uses. --}}
           pushNotification(detail) {
               detail = detail || {};
               this.notifications.unshift({
@@ -119,13 +96,8 @@
 
     @include('frietzakje::partials.page-loader')
 
-    {{-- Top Navigation Bar. The whole layout is an app shell: <body> is a fixed-height
-         (h-dvh) flex column that never scrolls, so this bar — a flex-shrink-0 row at the top —
-         is always on screen without `fixed`/`sticky` (both of which the app.css
-         `overflow-x: hidden` on html/body would fight). Only <main> scrolls. --}}
     <nav class="sticky top-0 z-50 h-16 flex-shrink-0 border-b border-secondary bg-bg/95 backdrop-blur-sm">
         <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
-            {{-- Left Section --}}
             <div class="flex items-center gap-4">
                 <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden grid size-9 place-items-center rounded-md hover:bg-secondary/40 transition-colors" :aria-expanded="sidebarOpen" aria-label="Menu">
                     <x-frietzakje-icon name="menu" class="text-2xl" x-show="!sidebarOpen" />
@@ -144,16 +116,9 @@
                 @endif
             </div>
 
-            {{-- Right Section --}}
             <div class="flex items-center gap-2">
-                {{-- The suite launcher. Each app in the ecosystem is its own deployment, so
-                     this is the only thing that lets a user move between them — and the only
-                     reason several separate apps read as one product. It renders nothing when
-                     there is nowhere to switch to. Opens right-aligned so the panel stays
-                     on-screen from this edge. --}}
                 <x-frietzakje-app-switcher align="right" />
 
-                {{-- Notifications with Badge & Dropdown --}}
                 @if(!isset($hideNotifications) || !$hideNotifications)
                 <div class="relative">
                     <button
@@ -170,7 +135,6 @@
                         class="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-bg"
                     ></span>
 
-                    {{-- Notification Dropdown Panel --}}
                     <div
                         x-show="notificationPanelOpen"
                         @click.outside="notificationPanelOpen = false"
@@ -183,7 +147,6 @@
                         class="fixed inset-x-2 top-[4.25rem] w-auto rounded-lg border border-secondary bg-bg shadow-panel sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-96"
                         x-cloak
                     >
-                        {{-- Header --}}
                         <div class="flex items-center justify-between border-b border-secondary p-4">
                             <div>
                                 <h3 class="font-bold">Notificaties</h3>
@@ -207,7 +170,6 @@
                             </div>
                         </div>
 
-                        {{-- Notifications List --}}
                         <div class="max-h-96 overflow-y-auto">
                             <template x-if="notifications.length === 0">
                                 <div class="p-8 text-center">
@@ -217,25 +179,18 @@
                             </template>
 
                             <template x-for="notification in notifications" :key="notification.id">
-                                {{-- A notification that tells you something is wrong but gives you
-                                     nowhere to go is just an interruption, so the row is a link
-                                     whenever the caller supplies a `url`. --}}
                                 <a
                                     :href="notification.url || '#'"
                                     class="block border-b border-secondary/40 p-4 hover:bg-secondary/20 transition-colors cursor-pointer relative group"
                                     :class="{ 'bg-secondary/10': !notification.read }"
                                     @click="markAsRead(notification.id)"
                                 >
-                                    {{-- Unread indicator --}}
                                     <div
                                         x-show="!notification.read"
                                         class="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary"
                                     ></div>
 
                                     <div class="flex gap-3 pl-4">
-                                        {{-- Icon. `warning` has its own colour now — it used to be
-                                             lumped in with danger, so "expiring soon" and "already
-                                             broken" shouted at exactly the same volume. --}}
                                         <div class="flex-shrink-0">
                                             <div
                                                 class="size-10 rounded-full flex items-center justify-center"
@@ -253,14 +208,12 @@
                                             </div>
                                         </div>
 
-                                        {{-- Content --}}
                                         <div class="flex-1 min-w-0">
                                             <p class="text-sm font-semibold" x-text="notification.title"></p>
                                             <p class="text-xs text-text/70 mt-1" x-text="notification.message"></p>
                                             <p class="text-xs text-text/50 mt-2" x-text="notification.time"></p>
                                         </div>
 
-                                        {{-- Dismiss button --}}
                                         <button
                                             type="button"
                                             @click.stop.prevent="removeNotification(notification.id)"
@@ -274,9 +227,6 @@
                             </template>
                         </div>
 
-                        {{-- Footer — only when the app provides a dedicated notifications page
-                             (a route named `notifications`). Without one there is nowhere to send
-                             the user, so we don't render a dead link. --}}
                         @if(\Illuminate\Support\Facades\Route::has('notifications'))
                         <div class="border-t border-secondary p-3 text-center">
                             <a href="{{ route('notifications') }}" class="text-sm text-primary hover:underline">Alle notificaties bekijken</a>
@@ -286,16 +236,10 @@
                 </div>
                 @endif
 
-                {{-- Discretion Mode Toggle. Blurs everything marked `.sensitive` at once — wages and
-                     costs, but also names, addresses, any private detail. Shown to owners, or
-                     wherever a page opts in with :showDiscreetToggle. `method_exists` keeps the
-                     shared layout safe in a suite app whose User has no isOwner(). --}}
                 @php
                     $__showDiscreet = ($showDiscreetToggle ?? false)
                         || (auth()->check() && method_exists(auth()->user(), 'isOwner') && auth()->user()->isOwner());
                 @endphp
-                {{-- Desktop: a one-tap icon. On mobile it moves into the account dropdown (below)
-                     to save the scarce navbar space. --}}
                 @if($__showDiscreet)
                 <button type="button"
                         @click="$store.discreet.on = !$store.discreet.on"
@@ -307,12 +251,10 @@
                 </button>
                 @endif
 
-                {{-- Custom Top Actions --}}
                 @if(isset($topActions))
                     {{ $topActions }}
                 @endif
 
-                {{-- User Menu --}}
                 @if(isset($userName) || isset($topUserMenu))
                 <div class="flex items-center gap-2 ml-2 pl-2 border-l border-secondary" x-data="{ userMenuOpen: false }">
                     <button
@@ -326,7 +268,6 @@
                         <x-frietzakje-icon name="expand_more" class="text-lg" />
                     </button>
 
-                    {{-- User Dropdown --}}
                     <div
                         x-show="userMenuOpen"
                         @click.outside="userMenuOpen = false"
@@ -362,11 +303,6 @@
                     </div>
                 </div>
                 @else
-                    {{-- No explicit user slot was passed, so fall back to the app's auth
-                         state. A signed-in user gets their initials and a menu with sign
-                         out; a guest gets a login icon that goes to the login page. The
-                         links only render if the app actually has those named routes, so
-                         this stays inert in apps that have no auth. --}}
                     @auth
                         @php
                             $__u = auth()->user();
@@ -416,7 +352,6 @@
                                                 {{ __('Profile') }}
                                             </a>
                                         @endif
-                                        {{-- Discretion toggle — mobile home for the navbar icon, which is hidden below sm. --}}
                                         @if($__showDiscreet)
                                             <button type="button"
                                                 @click="$store.discreet.on = !$store.discreet.on"
@@ -454,20 +389,10 @@
         </div>
     </nav>
 
-    {{-- Main Layout row (sidebar + content). `flex-1 min-h-0` fills the space between the
-         navbar and footer; `min-h-0` is what lets <main>'s own scrollbar work inside a flex
-         parent instead of the row growing to fit all the content. --}}
     <div class="flex flex-1 lg:min-h-0">
-        {{-- Sidebar --}}
-        {{-- Mobile: a full-width drawer below the navbar (easier to read and tap than a narrow
-             strip); the navbar's menu button stays above it to close. Desktop: the fixed w-64
-             column in normal flow. --}}
         <aside class="fixed top-16 bottom-0 left-0 z-40 w-full flex-shrink-0 overflow-y-auto border-r border-secondary bg-bg transition-transform duration-200 lg:static lg:w-64"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
 
-            {{-- Sidebar Navigation. A page may pass its own `navigation` slot; otherwise the
-                 app's nav data (config('frietzakje-ui.nav'), set per app) is rendered by the
-                 shared component — one layout, identical menu across apps, entries per app. --}}
             <nav class="flex-1 p-4" aria-label="Main navigation">
                 @isset($navigation)
                     {{ $navigation }}
@@ -476,7 +401,6 @@
                 @endif
             </nav>
 
-            {{-- Sidebar Footer (Optional User Menu) --}}
             @if(isset($sidebarFooter))
                 <div class="border-t border-secondary p-4 flex-shrink-0">
                     {{ $sidebarFooter }}
@@ -484,7 +408,6 @@
             @endif
         </aside>
 
-        {{-- Mobile Overlay --}}
         <div x-show="sidebarOpen"
              x-cloak
              @click="sidebarOpen = false"
@@ -496,21 +419,6 @@
              x-transition:leave-end="opacity-0"
              class="fixed inset-0 z-30 bg-bg/80 backdrop-blur-sm lg:hidden"></div>
 
-        {{-- Main Content.
-
-             Content fills the width. An app screen is not an article: the sidebar already takes
-             256px, and centring what is left inside a max-w-7xl column buys empty gutters at the
-             cost of the table you were trying to read. A page that genuinely wants to be narrow
-             (a wizard, a settings form) constrains itself — that is a decision for the page to
-             make, not a tax on every page.
-
-             `fluid` additionally drops the padding, for screens that must reach the edges: the
-             split-view inbox, the kanban board, the planner grid.
-
-             <main> IS the scroll container here (`overflow-y-auto`): in this app shell the window
-             never scrolls — the navbar, sidebar and footer are fixed-size rows of a
-             viewport-height body, and only the content in here moves. Any in-page sticky
-             (save bars, table headers) now sticks relative to <main>, which is what we want. --}}
         <main class="min-w-0 flex-1 overflow-x-hidden lg:overflow-y-auto">
             @if ($fluid ?? false)
                 <div class="w-full">
@@ -524,10 +432,6 @@
         </main>
     </div>
 
-    {{-- Footer — shown by default (a page can opt out with :showFooter="false"). As the last
-         flex-shrink-0 row of the viewport-height body, it is always on screen at the bottom
-         while the content scrolls above it. Carries copyright, the build identity (version +
-         commit — its one home now, not the navbar), and the legal links. --}}
     @if($showFooter ?? true)
         <footer class="flex-shrink-0 border-t border-secondary/60 bg-bg">
             <div class="w-full px-4 py-4 sm:px-6 lg:px-8">
@@ -559,10 +463,8 @@
         </footer>
     @endif
 
-    {{-- Cookie consent — asks once, remembers the choice. --}}
     @include('frietzakje::partials.cookie-banner')
 
-    {{-- Alpine Store for Discretion Mode --}}
     <script>
         document.addEventListener('alpine:init', () => {
             if (!Alpine.store('discreet')) {

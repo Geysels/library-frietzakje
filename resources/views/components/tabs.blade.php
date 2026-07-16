@@ -1,6 +1,4 @@
 @if (empty($tabs))
-    {{-- No tab list given: behave as a bare tablist and let the caller drive `activeTab`
-         from a surrounding x-data, which is how this component originally worked. --}}
     <div {{ $attributes->class('flex gap-1 overflow-x-auto border-b border-secondary') }} role="tablist">
         {{ $slot }}
     </div>

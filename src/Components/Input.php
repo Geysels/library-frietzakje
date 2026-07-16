@@ -14,7 +14,6 @@ class Input extends Component
         public ?string $name = null,
         public ?string $icon = null,
         public ?string $trailingIcon = null,
-        // Floating label: the label sits inside the field and rises on focus/fill.
         public bool $floating = false,
     ) {
     }

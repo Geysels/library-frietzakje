@@ -73,8 +73,6 @@
                         @endif
                     </div>
 
-                    {{-- Labels would wrap the row on small screens, so only the active step keeps
-                         its label there; the rest are dots until there is room. --}}
                     <div @class([
                         'min-w-0',
                         'hidden sm:block' => ! $active,

@@ -17,9 +17,6 @@
     >
         <x-frietzakje-icon name="grid_view" class="text-xl" />
 
-        {{-- Naming the app you are in is half the point: with several deployments wearing the
-             same shell, "which one am I looking at" stops being obvious. Always shown (icon +
-             label); falls back to the app name if FRIETZAKJE_APP isn't set to a known app. --}}
         <span class="hidden font-display text-sm font-semibold sm:inline">{{ $current['name'] ?? config('app.name') }}</span>
 
         <x-frietzakje-icon name="expand_more" class="text-lg" />
@@ -37,10 +34,7 @@
         x-transition:leave-end="opacity-0 scale-95"
         @class([
             'z-50 rounded-lg border border-secondary bg-bg p-2 shadow-panel',
-            // Mobile: pinned just below the navbar, spanning the viewport with small gutters,
-            // so it can never run off the edge no matter where the button sits.
             'fixed inset-x-2 top-[4.25rem] w-auto',
-            // Desktop: anchored to the button.
             'sm:absolute sm:inset-x-auto sm:top-full sm:mt-2 sm:w-80',
             'sm:left-0 sm:origin-top-left' => $align !== 'right',
             'sm:right-0 sm:origin-top-right' => $align === 'right',
@@ -53,8 +47,6 @@
 
         <div class="space-y-0.5">
             @foreach ($apps as $app)
-                {{-- Deliberately not named `$isCurrent`: that is the component method, and
-                     shadowing it with a bool makes the next iteration try to call a boolean. --}}
                 @php $here = $isCurrent($app); @endphp
 
                 <a

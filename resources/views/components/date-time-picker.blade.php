@@ -4,25 +4,18 @@
         .' focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary';
     $borderClass = $error ? 'border-danger' : 'border-secondary';
 
-    // Mode options: 'datetime', 'date', 'time'
-    $mode = $mode ?? 'datetime';
-
-    // Time format: 24hr or 12hr
+    $mode       = $mode ?? 'datetime';
     $timeFormat = $timeFormat ?? '24hr';
-
-    // Date format (for display)
     $dateFormat = $dateFormat ?? ($mode === 'time' ? 'H:i' : ($mode === 'date' ? 'Y-m-d' : 'Y-m-d H:i'));
 
-    // Enable/disable time picker
     $enableTime = $mode === 'datetime' || $mode === 'time';
     $noCalendar = $mode === 'time';
 
-    // Build flatpickr options
     $flatpickrOptions = [
         'enableTime' => $enableTime,
         'noCalendar' => $noCalendar,
         'dateFormat' => $dateFormat,
-        'time_24hr' => $timeFormat === '24hr',
+        'time_24hr'  => $timeFormat === '24hr',
     ];
 
     if ($minDate ?? false) {
