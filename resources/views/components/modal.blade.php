@@ -2,18 +2,23 @@
      Driven either by Alpine events (`name`) or a Livewire boolean (`show`). --}}
 @php
     // No border or heavy shadow — the dimmed, blurred backdrop already separates the panel, and on
-    // the dark theme a grey outline plus a black shadow just muddies the edge.
-    $panelClasses = 'w-full '.$maxWidth.' rounded-xl bg-bg p-6';
+    // the dark theme a grey outline plus a black shadow just muddies the edge. `max-h`/overflow lets
+    // a tall modal scroll inside itself instead of running off a small screen.
+    $panelClasses = 'w-full '.$maxWidth.' max-h-[90dvh] overflow-y-auto rounded-xl bg-bg p-6';
 @endphp
 
 <div
     @if ($usesLivewire())
         x-data
         x-show="$wire.{{ $show }}"
+        x-effect="document.documentElement.classList.toggle('overflow-hidden', $wire.{{ $show }})"
         x-on:keydown.escape.window="$wire.{{ $closeMethod }}()"
     @else
         x-data="{ open: false }"
         x-show="open"
+        {{-- Lock the page behind the modal so a phone scrolls the modal, not the page under it.
+             Toggling on <html> is the reliable way to freeze the document scroll. --}}
+        x-effect="document.documentElement.classList.toggle('overflow-hidden', open)"
         x-on:open-modal.window="if ($event.detail === '{{ $name }}') open = true"
         x-on:close-modal.window="if (! $event.detail || $event.detail === '{{ $name }}') open = false"
         x-on:keydown.escape.window="open = false"
