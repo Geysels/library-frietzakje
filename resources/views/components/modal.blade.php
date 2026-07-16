@@ -1,11 +1,11 @@
 {{-- Backdrop blurs, panel scales in. Closes on backdrop click, ESC, or the close button.
      Driven either by Alpine events (`name`) or a Livewire boolean (`show`). --}}
 @php
-    // No border (it muddied the edge); a single soft shadow lifts the panel off the dark backdrop
-    // without the banding that shadow-2xl showed. The OUTER div is the scroll container, so the
+    // No border (it muddied the edge); the shared soft `shadow-panel` lifts the panel off the dark
+    // backdrop without the banding shadow-2xl showed. The OUTER div is the scroll container, so the
     // panel needs no height cap of its own — a modal taller than the screen grows the scroll area
     // and stays reachable, instead of being clipped at the bottom.
-    $panelClasses = 'w-full '.$maxWidth.' rounded-xl bg-bg p-6 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.55)]';
+    $panelClasses = 'w-full '.$maxWidth.' rounded-xl bg-bg p-6 shadow-panel';
 @endphp
 
 <div

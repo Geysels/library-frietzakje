@@ -139,7 +139,7 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="opacity-100 scale-100"
                         x-transition:leave-end="opacity-0 scale-95"
-                        class="fixed inset-x-2 top-[4.25rem] w-auto rounded-lg border border-secondary bg-bg shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-96"
+                        class="fixed inset-x-2 top-[4.25rem] w-auto rounded-lg border border-secondary bg-bg shadow-panel sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-96"
                         x-cloak
                     >
                         {{-- Header --}}
@@ -291,7 +291,7 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="opacity-100 scale-100"
                         x-transition:leave-end="opacity-0 scale-95"
-                        class="absolute right-4 top-14 w-56 rounded-lg border border-secondary bg-bg shadow-xl"
+                        class="absolute right-4 top-14 w-56 rounded-lg border border-secondary bg-bg shadow-panel"
                         x-cloak
                     >
                         @if(isset($topUserMenu))
@@ -354,7 +354,7 @@
                                 x-transition:leave="transition ease-in duration-75"
                                 x-transition:leave-start="opacity-100 scale-100"
                                 x-transition:leave-end="opacity-0 scale-95"
-                                class="absolute right-4 top-14 w-56 rounded-lg border border-secondary bg-bg shadow-xl"
+                                class="absolute right-4 top-14 w-56 rounded-lg border border-secondary bg-bg shadow-panel"
                                 x-cloak
                             >
                                 <div class="p-3 border-b border-secondary">

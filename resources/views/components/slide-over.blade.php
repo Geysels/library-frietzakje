@@ -32,7 +32,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="translate-x-0"
         x-transition:leave-end="translate-x-full"
-        {{ $attributes->class('relative flex h-full w-full '.$width.' flex-col border-l border-secondary bg-bg shadow-2xl') }}
+        {{ $attributes->class('relative flex h-full w-full '.$width.' flex-col border-l border-secondary bg-bg shadow-panel') }}
     >
         <header class="flex items-start justify-between gap-3 border-b border-secondary p-5">
             <div class="min-w-0 space-y-1">

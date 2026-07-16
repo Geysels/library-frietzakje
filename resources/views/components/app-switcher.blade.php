@@ -36,7 +36,7 @@
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
         @class([
-            'z-50 rounded-lg border border-secondary bg-bg p-2 shadow-2xl',
+            'z-50 rounded-lg border border-secondary bg-bg p-2 shadow-panel',
             // Mobile: pinned just below the navbar, spanning the viewport with small gutters,
             // so it can never run off the edge no matter where the button sits.
             'fixed inset-x-2 top-[4.25rem] w-auto',
