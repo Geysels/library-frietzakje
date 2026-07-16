@@ -72,8 +72,28 @@
           clearAll() {
               this.notifications = [];
               this.notificationPanelOpen = false;
+          },
+
+          {{-- Add a notification from the client — no server round-trip. Dispatch a `notify`
+               window event with { type, icon, title, message, time, url?, open? }; it prepends to
+               the list (newest first) and the unread badge follows. `open: true` also pops the
+               panel. Mirrors how `toast` works, and is what the docs "test" button uses. --}}
+          pushNotification(detail) {
+              detail = detail || {};
+              this.notifications.unshift({
+                  id: detail.id ?? ('n' + Date.now() + '-' + Math.floor(Math.random() * 1e6)),
+                  type: detail.type ?? 'neutral',
+                  icon: detail.icon ?? 'notifications',
+                  title: detail.title ?? 'Notificatie',
+                  message: detail.message ?? '',
+                  time: detail.time ?? 'nu',
+                  url: detail.url ?? null,
+                  read: false,
+              });
+              if (detail.open) this.notificationPanelOpen = true;
           }
       }"
+      @notify.window="pushNotification($event.detail)"
       :class="{ 'privacy': $store.discreet?.on }">
 
     @include('frietzakje::partials.page-loader')
