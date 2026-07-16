@@ -43,7 +43,7 @@ php artisan vendor:publish --tag=frietzakje-ui-config
 
 ## Documentation
 
-The full component catalogue — every component, its props, and live examples — is documented in the consuming application (the Backoffice app exposes it at `/components`).
+The full component catalogue — every component, its props, and live examples — is documented in the consuming application, which can expose a docs page at `/components`.
 
 ## Requirements
 
