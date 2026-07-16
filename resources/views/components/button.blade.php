@@ -1,10 +1,17 @@
 @php
-    // `fz-ripple` marks the button for the click-ripple in app.js (it also sets
-    // position/overflow so the ink is clipped to the rounded shape).
-    $base = 'fz-ripple inline-flex items-center justify-center gap-2 rounded-md font-display font-bold tracking-tight'
-        .' transition-[filter,color,background-color,border-color] duration-150'
+    // The "animation" is three things: the click ripple (the `fz-ripple` marker app.js listens
+    // for), the colour/filter transition, and the hover states baked into each variant.
+    // `noAnimation` strips all three for a completely static button; the focus ring stays.
+    $noAnim = $noAnimation ?? false;
+
+    $base = 'inline-flex items-center justify-center gap-2 rounded-md font-display font-bold tracking-tight'
         .' focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-bg'
-        .' disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:filter-none';
+        .' disabled:cursor-not-allowed disabled:opacity-50';
+
+    if (! $noAnim) {
+        $base = 'fz-ripple '.$base
+            .' transition-[filter,color,background-color,border-color] duration-150 disabled:hover:filter-none';
+    }
 
     // Two rules keep this legible and consistent:
     //  • Solid — background is the colour; the label takes whichever foreground has the
@@ -46,7 +53,13 @@
         'lg' => 'px-5 py-2.5 text-base',
     ];
 
-    $classes = $base.' '.($variants[$variant] ?? $variants['primary']).' '.($sizes[$size] ?? $sizes['md']);
+    $variantClass = $variants[$variant] ?? $variants['primary'];
+    if ($noAnim) {
+        // Drop every hover: utility so the button doesn't shift on hover either.
+        $variantClass = preg_replace('/\s*hover:\S+/', '', $variantClass);
+    }
+
+    $classes = $base.' '.$variantClass.' '.($sizes[$size] ?? $sizes['md']);
 @endphp
 
 @if ($href)
