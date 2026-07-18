@@ -43,6 +43,7 @@ class UiServiceProvider extends ServiceProvider
             Components\Dropdown::class,
             Components\DropdownItem::class,
             Components\EmptyState::class,
+            Components\ErrorPage::class,
             Components\Grid::class,
             Components\Icon::class,
             Components\Input::class,
