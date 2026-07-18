@@ -33,7 +33,9 @@
         'lg'   => 'p-8',
     ];
 
-    $pad = $paddings[$padding] ?? ($padded ? $paddings['md'] : '');
+    // Cast: `padding` defaults to null, and null as an array offset is deprecated in PHP 8.4.
+    // '' is not a key, so an unset padding still falls through to the `padded` shorthand.
+    $pad = $paddings[(string) $padding] ?? ($padded ? $paddings['md'] : '');
 
     $classes = 'rounded-lg bg-bg/40 backdrop-blur-sm border-secondary '
         .($borderWidths[$border] ?? $borderWidths['default'])
