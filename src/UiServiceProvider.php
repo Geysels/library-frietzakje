@@ -49,6 +49,7 @@ class UiServiceProvider extends ServiceProvider
             Components\Input::class,
             Components\Link::class,
             Components\Modal::class,
+            Components\Nav::class,
             Components\NavSection::class,
             Components\NavItem::class,
             Components\PageHeader::class,

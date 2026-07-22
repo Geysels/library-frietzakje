@@ -4,7 +4,7 @@
         ->first(fn ($path) => file_exists(public_path($path)));
 
     $background = file_exists(public_path('images/login-bg.jpg')) ? 'images/login-bg.jpg' : null;
-    $build = trim('v'.config('app.version').' · '.config('app.commit'), ' ·');
+    $build = \Frietzakje\Ui\BuildStamp::current();
 @endphp
 
 <!DOCTYPE html>
@@ -60,7 +60,7 @@
             @endif
         </div>
 
-        @if ($build !== 'v')
+        @if ($build !== '')
             <div class="pointer-events-none fixed bottom-2 right-3 font-mono text-[10px] leading-none text-white/20">{{ $build }}</div>
         @endif
     </main>

@@ -397,7 +397,7 @@
                 @isset($navigation)
                     {{ $navigation }}
                 @elseif(config('frietzakje-ui.nav'))
-                    <x-frietzakje::sidebar-nav :sections="config('frietzakje-ui.nav')" />
+                    <x-frietzakje::nav :sections="config('frietzakje-ui.nav')" />
                 @endif
             </nav>
 
@@ -438,8 +438,9 @@
                 <div class="flex flex-col gap-3 text-xs text-text/50 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
                         <span>&copy; {{ now()->year }} {{ config('app.name') }}. Alle rechten voorbehouden.</span>
-                        @if(config('app.version') || config('app.commit'))
-                            <span class="font-mono text-text/40">{{ trim('v'.config('app.version').' · '.config('app.commit'), ' ·') }}</span>
+                        @php($buildStamp = \Frietzakje\Ui\BuildStamp::current())
+                        @if($buildStamp !== '')
+                            <span class="font-mono text-text/40">{{ $buildStamp }}</span>
                         @endif
                     </div>
 

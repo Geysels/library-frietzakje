@@ -97,9 +97,10 @@
     </div>
 @endif
 
-    @if (config('app.version') || config('app.commit'))
+    @php($buildStamp = \Frietzakje\Ui\BuildStamp::current())
+    @if ($buildStamp !== '')
         <div class="pointer-events-none fixed bottom-2 right-3 z-50 font-mono text-[10px] leading-none text-white/20">
-            {{ trim('v'.config('app.version').' · '.config('app.commit'), ' ·') }}
+            {{ $buildStamp }}
         </div>
     @endif
 
