@@ -164,12 +164,9 @@
                             <x-frietzakje-icon :name="$group['icon']" class="text-lg" />
                         @endif
                         <span class="flex-1">{{ $group['label'] }}</span>
-                        @if ($group['active'])
-                            <span x-show="openKey !== '{{ $group['key'] }}'" x-cloak class="h-1.5 w-1.5 rounded-full bg-primary"></span>
-                            <x-frietzakje-icon name="expand_more" x-show="openKey === '{{ $group['key'] }}'" x-cloak class="rotate-180 text-base" />
-                        @else
-                            <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="openKey === '{{ $group['key'] }}' ? 'rotate-180' : ''" />
-                        @endif
+                        {{-- Chevron always; the primary accent above colours the whole header
+                             (chevron included) when the active category is collapsed. --}}
+                        <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="openKey === '{{ $group['key'] }}' ? 'rotate-180' : ''" />
                     </button>
 
                     {{-- Guide rail + indent make the group→item hierarchy legible; the rail lights up
