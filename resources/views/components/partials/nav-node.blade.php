@@ -43,7 +43,8 @@
             <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''" />
         </button>
 
-        <ul x-show="open" x-collapse x-cloak id="{{ $__subKey }}" class="mt-1 space-y-1 pl-4">
+        <ul x-show="open" x-collapse x-cloak id="{{ $__subKey }}"
+            class="mt-1 ml-[11px] space-y-1 border-l pl-[11px] {{ $node['active'] ? 'border-primary/60' : 'border-secondary' }}">
             @foreach ($node['children'] as $child)
                 <li>
                     <a @if (! $child['active']) href="{{ $child['href'] }}" @if (function_exists('wire')) wire:navigate @endif @endif

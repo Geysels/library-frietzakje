@@ -152,7 +152,10 @@
                     <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="openKey === '{{ $group['key'] }}' ? 'rotate-180' : ''" />
                 </button>
 
-                <ul x-show="openKey === '{{ $group['key'] }}'" x-collapse x-cloak id="{{ $group['key'] }}" class="mt-1 space-y-1">
+                {{-- Guide rail + indent make the group→item hierarchy legible; the rail lights up
+                     (primary) for the group holding the current page — a subtle "you are here". --}}
+                <ul x-show="openKey === '{{ $group['key'] }}'" x-collapse x-cloak id="{{ $group['key'] }}"
+                    class="mt-1 ml-[21px] space-y-1 border-l pl-[13px] {{ $group['active'] ? 'border-primary/60' : 'border-secondary' }}">
                     @foreach ($group['items'] as $item)
                         @include('frietzakje::components.partials.nav-node', ['node' => $item])
                     @endforeach
