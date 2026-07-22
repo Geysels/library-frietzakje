@@ -36,8 +36,9 @@ return [
     |
     */
 
+    // Keyed by the app's FRIETZAKJE_APP value (NOT a friendly name) — the hub's is 'platform'.
     'codes' => [
-        'ui' => 'UI',
+        'platform' => 'UI',
         'planning' => 'PL',
         'stock' => 'ST',
     ],
