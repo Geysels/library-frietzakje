@@ -46,13 +46,12 @@
         <ul x-show="open" x-collapse x-cloak id="{{ $__subKey }}" class="mt-1 space-y-1 pl-4">
             @foreach ($node['children'] as $child)
                 <li>
-                    <a href="{{ $child['href'] }}"
-                       @if (function_exists('wire')) wire:navigate @endif
+                    <a @if (! $child['active']) href="{{ $child['href'] }}" @if (function_exists('wire')) wire:navigate @endif @endif
                        @click="sidebarOpen = false"
                        @if ($child['external']) target="_blank" rel="noopener" @endif
                        @class([
                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150',
-                           $__activeClasses => $child['active'],
+                           $__activeClasses.' cursor-default' => $child['active'],
                            $__idleClasses => ! $child['active'],
                        ])
                        aria-current="{{ $child['active'] ? 'page' : 'false' }}">
@@ -64,13 +63,14 @@
     </li>
 @else
     <li>
-        <a href="{{ $node['href'] }}"
-           @if (function_exists('wire')) wire:navigate @endif
+        {{-- The current page is inert: no href/wire:navigate, so clicking it does nothing
+             (no needless re-navigation/refresh). --}}
+        <a @if (! $node['active']) href="{{ $node['href'] }}" @if (function_exists('wire')) wire:navigate @endif @endif
            @click="sidebarOpen = false"
            @if ($node['external']) target="_blank" rel="noopener" @endif
            @class([
                'flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-150',
-               $__activeClasses => $node['active'],
+               $__activeClasses.' cursor-default' => $node['active'],
                $__idleClasses => ! $node['active'],
            ])
            aria-current="{{ $node['active'] ? 'page' : 'false' }}">
