@@ -444,19 +444,15 @@
                         @endif
                     </div>
 
+                    {{-- Legal pages are business-wide, so they live once on the platform; every app's
+                         footer shows the SAME four links pointing at those canonical pages — relative on
+                         the hub itself, absolute (to the platform) on satellite apps. --}}
+                    @php($__legalBase = rtrim((string) config('services.sso.platform_url'), '/'))
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-                        @if(\Illuminate\Support\Facades\Route::has('legal.company'))
-                            <a href="{{ route('legal.company') }}" class="transition-colors hover:text-text">{{ __('Company details') }}</a>
-                        @endif
-                        @if(\Illuminate\Support\Facades\Route::has('legal.terms'))
-                            <a href="{{ route('legal.terms') }}" class="transition-colors hover:text-text">{{ __('Terms of service') }}</a>
-                        @endif
-                        @if(\Illuminate\Support\Facades\Route::has('legal.privacy'))
-                            <a href="{{ route('legal.privacy') }}" class="transition-colors hover:text-text">{{ __('Privacy policy') }}</a>
-                        @endif
-                        @if(\Illuminate\Support\Facades\Route::has('legal.cookies'))
-                            <a href="{{ route('legal.cookies') }}" class="transition-colors hover:text-text">{{ __('Cookie policy') }}</a>
-                        @endif
+                        <a href="{{ $__legalBase }}/bedrijfsgegevens" class="transition-colors hover:text-text">Bedrijfsgegevens</a>
+                        <a href="{{ $__legalBase }}/voorwaarden" class="transition-colors hover:text-text">Voorwaarden</a>
+                        <a href="{{ $__legalBase }}/privacy" class="transition-colors hover:text-text">Privacy</a>
+                        <a href="{{ $__legalBase }}/cookies" class="transition-colors hover:text-text">Cookies</a>
                         {{ $footerLinks ?? '' }}
                     </div>
                 </div>
