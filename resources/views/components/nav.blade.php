@@ -108,9 +108,28 @@
             'key' => 'nav-'.\Illuminate\Support\Str::slug($label ?? 'groep').'-'.count($__groups),
         ];
     }
+
+    // Single-open accordion: only one group is open at a time. The group containing the current
+    // page opens by default; otherwise the last-opened group is restored client-side.
+    $__active = collect($__groups)->firstWhere('active', true);
+    $__activeKey = $__active['key'] ?? null;
 @endphp
 
-<div {{ $attributes->class('space-y-4') }}>
+<div {{ $attributes->class('space-y-4') }}
+     x-data="{
+         openKey: '{{ $__activeKey }}' || null,
+         init() {
+             // No group is active on this page → restore the last-opened one.
+             if (! this.openKey) {
+                 this.openKey = localStorage.getItem('nav-open') || null;
+             }
+         },
+         toggle(key) {
+             // Accordion: opening a group closes whichever was open.
+             this.openKey = (this.openKey === key) ? null : key;
+             localStorage.setItem('nav-open', this.openKey ?? '');
+         },
+     }">
     @foreach ($__groups as $group)
         @if ($group['label'] === null)
             {{-- Un-grouped: render the items directly, always visible. --}}
@@ -120,33 +139,20 @@
                 @endforeach
             </ul>
         @else
-            <div x-data="{
-                    open: false,
-                    init() {
-                        @if ($group['active'])
-                            this.open = true;
-                        @else
-                            this.open = localStorage.getItem('{{ $group['key'] }}') === '1';
-                        @endif
-                    },
-                    toggle() {
-                        this.open = ! this.open;
-                        localStorage.setItem('{{ $group['key'] }}', this.open ? '1' : '0');
-                    },
-                }">
+            <div>
                 <button type="button"
-                        @click="toggle()"
+                        @click="toggle('{{ $group['key'] }}')"
                         class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-text/60 transition-colors hover:bg-secondary/40 hover:text-text/80"
-                        :aria-expanded="open"
+                        :aria-expanded="openKey === '{{ $group['key'] }}'"
                         aria-controls="{{ $group['key'] }}">
                     @if ($group['icon'])
                         <x-frietzakje-icon :name="$group['icon']" class="text-lg" />
                     @endif
                     <span class="flex-1">{{ $group['label'] }}</span>
-                    <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''" />
+                    <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="openKey === '{{ $group['key'] }}' ? 'rotate-180' : ''" />
                 </button>
 
-                <ul x-show="open" x-collapse x-cloak id="{{ $group['key'] }}" class="mt-1 space-y-1">
+                <ul x-show="openKey === '{{ $group['key'] }}'" x-collapse x-cloak id="{{ $group['key'] }}" class="mt-1 space-y-1">
                     @foreach ($group['items'] as $item)
                         @include('frietzakje::components.partials.nav-node', ['node' => $item])
                     @endforeach

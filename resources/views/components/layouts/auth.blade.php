@@ -51,7 +51,7 @@
                     @if ($logo)
                         <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-20 w-auto">
                     @endif
-                    <span class="wordmark text-xl text-primary">{{ config('app.name') }}</span>
+                    <span class="wordmark text-xl text-primary">{{ config('frietzakje-ui.brand') }}</span>
                 </div>
 
                 @if ($heading)
@@ -74,7 +74,7 @@
                     @if ($logo)
                         <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="size-9 rounded-md">
                     @endif
-                    <span class="wordmark text-xl text-primary">{{ config('app.name') }}</span>
+                    <span class="wordmark text-xl text-primary">{{ config('frietzakje-ui.brand') }}</span>
                 </div>
 
                 @if ($heading)

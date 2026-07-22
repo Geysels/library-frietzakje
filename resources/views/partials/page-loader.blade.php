@@ -9,7 +9,7 @@
         <img src="{{ asset($logo) }}" alt="{{ config('app.name') }}" class="h-32 w-auto animate-pulse sm:h-40">
     @endif
 
-    <span class="wordmark text-3xl text-primary sm:text-4xl">{{ config('app.name') }}</span>
+    <span class="wordmark text-3xl text-primary sm:text-4xl">{{ config('frietzakje-ui.brand') }}</span>
 
     <div class="mt-2 flex items-center gap-3 text-text/60">
         <x-frietzakje-spinner size="md" variant="primary" />

@@ -8,6 +8,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Brand
+    |--------------------------------------------------------------------------
+    |
+    | The business/brand name shown in the wordmark spots across the suite — the
+    | navbar, the sign-in screen, the loading splash and the footer copyright.
+    | This is the SINGLE place the brand is rendered from, so a rename is one
+    | edit here (or set APP_BRAND per app). App-specific labels ("Voorraad",
+    | "Planning") stay in APP_NAME / the app switcher, never in the wordmark.
+    |
+    */
+
+    'brand' => env('APP_BRAND', "'t Frietzakje"),
+
+    /*
+    |--------------------------------------------------------------------------
     | App codes
     |--------------------------------------------------------------------------
     |

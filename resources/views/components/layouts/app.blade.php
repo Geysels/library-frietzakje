@@ -108,7 +108,7 @@
                     @if(file_exists(public_path('logo.svg')))
                         <img src="{{ asset('logo.svg') }}" alt="{{ config('app.name') }}" class="h-8 w-8 rounded-md">
                     @endif
-                    <h1 class="wordmark text-primary text-xl hidden sm:inline">{{ config('app.name') }}</h1>
+                    <h1 class="wordmark text-primary text-xl hidden sm:inline">{{ config('frietzakje-ui.brand') }}</h1>
                 </div>
 
                 @if(isset($badge))
@@ -437,7 +437,7 @@
             <div class="w-full px-4 py-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col gap-3 text-xs text-text/50 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <span>&copy; {{ now()->year }} {{ config('app.name') }}. Alle rechten voorbehouden.</span>
+                        <span>&copy; {{ now()->year }} {{ config('frietzakje-ui.brand') }}. Alle rechten voorbehouden.</span>
                         @php($buildStamp = \Frietzakje\Ui\BuildStamp::current())
                         @if($buildStamp !== '')
                             <span class="font-mono text-text/40">{{ $buildStamp }}</span>
