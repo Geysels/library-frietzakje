@@ -46,44 +46,72 @@
         </p>
 
         <div class="space-y-0.5">
+            @php $__user = auth()->user(); @endphp
             @foreach ($apps as $app)
-                @php $here = $isCurrent($app); @endphp
+                {{-- Owner-only apps stay hidden from everyone else. --}}
+                @continue(($app['owner'] ?? false) && ! ($__user?->isOwner()))
+                @php
+                    $here = $isCurrent($app);
+                    $locked = $app['locked'] ?? false;
+                @endphp
 
-                <a
-                    href="{{ $app['url'] }}"
-                    role="menuitem"
-                    @if ($here) aria-current="true" @endif
-                    @class([
-                        'flex items-start gap-3 rounded-md p-2 transition-colors duration-150',
-                        'bg-primary/10' => $here,
-                        'hover:bg-secondary/50' => ! $here,
-                    ])
-                >
-                    <div @class([
-                        'grid size-9 flex-shrink-0 place-items-center rounded-lg',
-                        'bg-primary/20 text-primary' => $here,
-                        'bg-secondary/60 text-text/60' => ! $here,
-                    ])>
-                        <x-frietzakje-icon :name="$app['icon'] ?? 'apps'" class="text-xl" />
-                    </div>
+                @if ($locked)
+                    {{-- Coming soon: shown so people know it's on the way, but not yet openable. --}}
+                    <div aria-disabled="true" class="flex items-start gap-3 rounded-md p-2 opacity-60">
+                        <div class="grid size-9 flex-shrink-0 place-items-center rounded-lg bg-secondary/60 text-text/50">
+                            <x-frietzakje-icon :name="$app['icon'] ?? 'apps'" class="text-xl" />
+                        </div>
 
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2">
-                            <span @class([
-                                'font-display text-sm font-semibold',
-                                'text-primary' => $here,
-                            ])>{{ $app['name'] }}</span>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-display text-sm font-semibold text-text/70">{{ $app['name'] }}</span>
+                                <x-frietzakje-badge variant="neutral" size="sm">Binnenkort</x-frietzakje-badge>
+                            </div>
 
-                            @if ($here)
-                                <x-frietzakje-badge variant="primary" size="sm">Huidig</x-frietzakje-badge>
+                            @if (! empty($app['description']))
+                                <p class="truncate text-xs text-text/60">{{ $app['description'] }}</p>
                             @endif
                         </div>
 
-                        @if (! empty($app['description']))
-                            <p class="truncate text-xs text-text/60">{{ $app['description'] }}</p>
-                        @endif
+                        <x-frietzakje-icon name="lock" class="mt-1 flex-shrink-0 text-base text-text/40" />
                     </div>
-                </a>
+                @else
+                    <a
+                        href="{{ $app['url'] }}"
+                        role="menuitem"
+                        @if ($here) aria-current="true" @endif
+                        @class([
+                            'flex items-start gap-3 rounded-md p-2 transition-colors duration-150',
+                            'bg-primary/10' => $here,
+                            'hover:bg-secondary/50' => ! $here,
+                        ])
+                    >
+                        <div @class([
+                            'grid size-9 flex-shrink-0 place-items-center rounded-lg',
+                            'bg-primary/20 text-primary' => $here,
+                            'bg-secondary/60 text-text/60' => ! $here,
+                        ])>
+                            <x-frietzakje-icon :name="$app['icon'] ?? 'apps'" class="text-xl" />
+                        </div>
+
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span @class([
+                                    'font-display text-sm font-semibold',
+                                    'text-primary' => $here,
+                                ])>{{ $app['name'] }}</span>
+
+                                @if ($here)
+                                    <x-frietzakje-badge variant="primary" size="sm">Huidig</x-frietzakje-badge>
+                                @endif
+                            </div>
+
+                            @if (! empty($app['description']))
+                                <p class="truncate text-xs text-text/60">{{ $app['description'] }}</p>
+                            @endif
+                        </div>
+                    </a>
+                @endif
             @endforeach
         </div>
     </div>
