@@ -113,9 +113,14 @@
     // page opens by default; otherwise the last-opened group is restored client-side.
     $__active = collect($__groups)->firstWhere('active', true);
     $__activeKey = $__active['key'] ?? null;
+
+    // Top-level pages (un-grouped / null-label sections) render as plain links above the
+    // categories, separated by a divider; categories are the collapsible groups below.
+    $__pageGroups = array_values(array_filter($__groups, fn ($g) => $g['label'] === null));
+    $__catGroups = array_values(array_filter($__groups, fn ($g) => $g['label'] !== null));
 @endphp
 
-<div {{ $attributes->class('space-y-4') }}
+<div {{ $attributes }}
      x-data="{
          openKey: '{{ $__activeKey }}' || null,
          init() {
@@ -130,37 +135,53 @@
              localStorage.setItem('nav-open', this.openKey ?? '');
          },
      }">
-    @foreach ($__groups as $group)
-        @if ($group['label'] === null)
-            {{-- Un-grouped: render the items directly, always visible. --}}
-            <ul class="space-y-1">
+    {{-- Top-level pages: plain links, always visible, above the categories. --}}
+    @if ($__pageGroups)
+        <ul class="space-y-1">
+            @foreach ($__pageGroups as $group)
                 @foreach ($group['items'] as $item)
                     @include('frietzakje::components.partials.nav-node', ['node' => $item])
                 @endforeach
-            </ul>
-        @else
-            <div>
-                <button type="button"
-                        @click="toggle('{{ $group['key'] }}')"
-                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-text/60 transition-colors hover:bg-secondary/40 hover:text-text/80"
-                        :aria-expanded="openKey === '{{ $group['key'] }}'"
-                        aria-controls="{{ $group['key'] }}">
-                    @if ($group['icon'])
-                        <x-frietzakje-icon :name="$group['icon']" class="text-lg" />
-                    @endif
-                    <span class="flex-1">{{ $group['label'] }}</span>
-                    <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="openKey === '{{ $group['key'] }}' ? 'rotate-180' : ''" />
-                </button>
+            @endforeach
+        </ul>
+    @endif
 
-                {{-- Guide rail + indent make the group→item hierarchy legible; the rail lights up
-                     (primary) for the group holding the current page — a subtle "you are here". --}}
-                <ul x-show="openKey === '{{ $group['key'] }}'" x-collapse x-cloak id="{{ $group['key'] }}"
-                    class="mt-1 ml-[21px] space-y-1 border-l pl-[13px] {{ $group['active'] ? 'border-primary/60' : 'border-secondary' }}">
-                    @foreach ($group['items'] as $item)
-                        @include('frietzakje::components.partials.nav-node', ['node' => $item])
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-    @endforeach
+    {{-- Categories: single-open accordion, divided from the pages above. --}}
+    @if ($__catGroups)
+        <div class="space-y-4 {{ $__pageGroups ? 'mt-4 border-t border-secondary pt-4' : '' }}">
+            @foreach ($__catGroups as $group)
+                <div>
+                    {{-- The header of the category holding the current page turns primary (label + a
+                         dot, no chevron) WHEN collapsed, so an open other category never hides where
+                         you are. Open, it shows the chevron and the active item inside carries the state. --}}
+                    <button type="button"
+                            @click="toggle('{{ $group['key'] }}')"
+                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-secondary/40"
+                            :class="({{ $group['active'] ? 'true' : 'false' }} && openKey !== '{{ $group['key'] }}') ? 'text-primary' : 'text-text/60 hover:text-text/80'"
+                            :aria-expanded="openKey === '{{ $group['key'] }}'"
+                            aria-controls="{{ $group['key'] }}">
+                        @if ($group['icon'])
+                            <x-frietzakje-icon :name="$group['icon']" class="text-lg" />
+                        @endif
+                        <span class="flex-1">{{ $group['label'] }}</span>
+                        @if ($group['active'])
+                            <span x-show="openKey !== '{{ $group['key'] }}'" x-cloak class="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                            <x-frietzakje-icon name="expand_more" x-show="openKey === '{{ $group['key'] }}'" x-cloak class="rotate-180 text-base" />
+                        @else
+                            <x-frietzakje-icon name="expand_more" class="text-base transition-transform duration-200" x-bind:class="openKey === '{{ $group['key'] }}' ? 'rotate-180' : ''" />
+                        @endif
+                    </button>
+
+                    {{-- Guide rail + indent make the group→item hierarchy legible; the rail lights up
+                         (primary) for the group holding the current page. --}}
+                    <ul x-show="openKey === '{{ $group['key'] }}'" x-collapse x-cloak id="{{ $group['key'] }}"
+                        class="mt-1 ml-[21px] space-y-1 border-l pl-[13px] {{ $group['active'] ? 'border-primary/60' : 'border-secondary' }}">
+                        @foreach ($group['items'] as $item)
+                            @include('frietzakje::components.partials.nav-node', ['node' => $item])
+                        @endforeach
+                    </ul>
+                </div>
+            @endforeach
+        </div>
+    @endif
 </div>
